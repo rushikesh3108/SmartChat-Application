@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "415394163118",
+    "firebase_url": "https://smartchat-c3153.firebaseio.com",
+    "project_id": "smartchat-c3153",
+    "storage_bucket": "smartchat-c3153.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415394163118:android:ce32afba8666a69e",
+        "android_client_info": {
+          "package_name": "com.example.smartchart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "415394163118-ict6iet8dvef45tnanru2g9irvmup83n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjnBmoXZO3GVC8huSzLKGAVvvJQfgIAHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "415394163118-ict6iet8dvef45tnanru2g9irvmup83n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
