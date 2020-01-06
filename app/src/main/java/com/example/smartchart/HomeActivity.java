@@ -84,8 +84,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d(TAG, "onQueryTextChange: "+newText);
                 databaseHandler.search(newText);
 
-             /*   databaseHandler.search(newText);
-                Log.d(TAG, "onQueryTextChange: "+newText);*/
+
                 return false;
             }
         });

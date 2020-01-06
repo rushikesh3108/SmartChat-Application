@@ -57,11 +57,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     public void Delivery(String delivery) {
-        // mChat.add(delivery);
         Log.d(TAG, "Delivery: " + delivery);
-/*
-        mChat.add(globalposition, );
-*/
 
 
     }
@@ -79,17 +75,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         holder.txtTimeStamp.setText(dateFormat.format(result));
 
-       String str= chat.getDeliveryStatus();
-        Log.d(TAG, "onBindViewHolder: stringgggg "+str);
-        Log.d(TAG, "onBindViewHolder:  delivery status : "+chat.getDeliveryStatus());
-        if ("pending".equalsIgnoreCase(chat.getDeliveryStatus())){
 
-            holder.imgsend.setImageResource(R.drawable.pendingstatus);
+        Log.d(TAG, "onBindViewHolder: view tupe  "+getItemViewType(position));
 
-        }
-        else {
-            holder.imgsend.setImageResource(R.drawable.successstatus);
 
+        if (getItemViewType(position)==MSG_TYPE_RIGHT) {
+
+            String str = chat.getDeliveryStatus();
+            Log.d(TAG, "onBindViewHolder: stringgggg " + str);
+            Log.d(TAG, "onBindViewHolder:  delivery status : " + chat.getDeliveryStatus());
+            if ("pending".equalsIgnoreCase(chat.getDeliveryStatus())) {
+
+                holder.imgsend.setImageResource(R.drawable.pendingstatus);
+
+            } else {
+                holder.imgsend.setImageResource(R.drawable.successstatus);
+
+            }
         }
 
     }
