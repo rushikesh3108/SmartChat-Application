@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.smartchart.Fragments.Contacts;
+import com.example.smartchart.Fragments.SheduleMessageFragments;
 import com.example.smartchart.Fragments.chats;
 
 import java.util.List;
@@ -26,11 +27,14 @@ public class MyPagerAadpter extends FragmentStatePagerAdapter {
       if (i==0){
           return new chats();
 
-      }
-      else {
+      } else if (i == 1) {
           return new Contacts();
 
+      } else {
+          return  new SheduleMessageFragments();
+
       }
+
     }
     @Override
     public CharSequence getPageTitle(int i)

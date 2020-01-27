@@ -65,6 +65,11 @@ dependencies {
     implementation 'com.android.support:design:29.0.0'
 
 
+    //tokenview
+    implementation "com.splitwise:tokenautocomplete:3.0.1@aar"
+
+
+
     //material search view
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 

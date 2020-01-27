@@ -48,6 +48,8 @@ public class HomeActivity extends AppCompatActivity {
 
         tablist.add("chats");
         tablist.add("contacts");
+        tablist.add("sheduller");
+
 
 
         myPagerAadpter = new MyPagerAadpter(getSupportFragmentManager(), tablist);
@@ -61,6 +63,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int i) {
                 Log.d(TAG, "onPageSelected: " + i);
+
+
+                if (searchView.isSearchOpen()) {
+                    searchView.closeSearch();
+                }
 
             }
 

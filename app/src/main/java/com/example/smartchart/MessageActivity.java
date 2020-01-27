@@ -201,10 +201,7 @@ public class MessageActivity extends AppCompatActivity {
 
         String time = String.valueOf(timeStamp);
 
-       /* MessageData messageData = new MessageData();
 
-        messageData.setDeliveryStatus("pending");
-*/
         txtmessage = message.getText().toString().replace(" ", "_");
 
         messageID = Utils.generateUniqueMessageId();

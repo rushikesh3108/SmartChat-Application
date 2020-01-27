@@ -14,7 +14,7 @@ import butterknife.OnClick;
 
 public class PhoneNumberInsertionActivity extends AppCompatActivity {
     EditText editText;
-   // Spinner spinner;
+
     @BindView(R.id.next)
     Button next_button;
 
@@ -24,15 +24,12 @@ public class PhoneNumberInsertionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_phone_number_insertion);
         editText = findViewById(R.id.phnumber);
         ButterKnife.bind(this);
-       // spinner = findViewById(R.id.countrycode);
-      //  spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, CountryData.countryNames));
 
 
     }
 
     @OnClick(R.id.next)
     public void nextbutton(View view) {
-     //   String code = CountryData.countryAreaCodes[spinner.getSelectedItemPosition()];
 
         String number = editText.getText().toString();
         if (number.isEmpty() || number.length() < 10) {

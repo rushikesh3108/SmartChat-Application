@@ -14,7 +14,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="type_a_message_to_send">Type a message to send</string>
-    <string name="msg_subscribed" >subscribe</string>
-    <string name="msg_subscribe_failed" >unsubcribe</string>
+    <string name="msg_subscribed">subscribe</string>
+    <string name="msg_subscribe_failed">unsubcribe</string>
     <string name="hello">hello</string>
 </resources>
