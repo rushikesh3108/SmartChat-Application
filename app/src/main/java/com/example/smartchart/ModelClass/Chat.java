@@ -2,7 +2,8 @@ package com.example.smartchart.ModelClass;
 
 import java.io.Serializable;
 
-public class Chat implements Serializable {
+public class Chat  implements Serializable
+{
 
     public int chatId;
 
@@ -12,6 +13,15 @@ public class Chat implements Serializable {
 
     public Users user;
 
+    public Shedulermessagedata getShedulermessagedata() {
+        return shedulermessagedata;
+    }
+
+    public void setShedulermessagedata(Shedulermessagedata shedulermessagedata) {
+        this.shedulermessagedata = shedulermessagedata;
+    }
+
+    public Shedulermessagedata shedulermessagedata;
 
 
     public int getChatId() {

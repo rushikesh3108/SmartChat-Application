@@ -5,16 +5,33 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.smartchart.Adapter.ShedulerAdapter;
+import com.example.smartchart.Database.DatabaseHandler;
+import com.example.smartchart.ModelClass.Shedulermessagedata;
 import com.example.smartchart.R;
 import com.example.smartchart.SheduleMessageActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SheduleMessageFragments extends Fragment implements View.OnClickListener {
+    Context mcontext;
+    RecyclerView recyclerView;
+
+
+    List<Shedulermessagedata> mychatlist;
+    private static final String TAG = "SheduleMessageFragments";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -25,7 +42,7 @@ public class SheduleMessageFragments extends Fragment implements View.OnClickLis
     private String mParam2;
 
     FloatingActionButton floatingActionButton;
-
+    ShedulerAdapter sheduleMessageAdapter;
 
     public SheduleMessageFragments() {
         // Required empty public constructor
@@ -62,13 +79,31 @@ public class SheduleMessageFragments extends Fragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_shedule_message_fragments, container, false);
+        View view = inflater.inflate(R.layout.fragment_shedule_message_fragments, container, false);
+
+        recyclerView = view.findViewById(R.id.shedule_recycler_view);
+
+        mcontext = container.getContext();
 
 
-        floatingActionButton= view.findViewById(R.id.add);
-floatingActionButton.setOnClickListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mcontext);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration decoration = new DividerItemDecoration(mcontext, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(decoration);
 
-   return view;
+        DatabaseHandler databaseHandler = new DatabaseHandler(mcontext);
+        mychatlist = new ArrayList<>();
+
+        mychatlist = databaseHandler.getSheduleList();
+        Log.d(TAG, "shedulelis  size   " + mychatlist.size() );
+        floatingActionButton = view.findViewById(R.id.add);
+        floatingActionButton.setOnClickListener(this);
+
+
+        sheduleMessageAdapter = new ShedulerAdapter(mychatlist,mcontext);
+        recyclerView.setAdapter(sheduleMessageAdapter);
+
+        return view;
 
     }
 
@@ -87,11 +122,8 @@ floatingActionButton.setOnClickListener(this);
 
     @Override
     public void onClick(View view) {
-        Intent intent =new Intent(getActivity(), SheduleMessageActivity.class);
+        Intent intent = new Intent(getActivity(), SheduleMessageActivity.class);
         startActivity(intent);
-
-
-
 
     }
 }

@@ -3,9 +3,13 @@ package com.example.smartchart;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.smartchart.Adapter.TokenUserAdapter;
 import com.example.smartchart.Database.DatabaseHandler;
@@ -35,7 +40,9 @@ public class SheduleMessageActivity extends AppCompatActivity implements TokenCo
 
     Button sedate, setime, shedule;
 
-    String body, senderid;
+    String body, senderid, messgeid, userid;
+
+    private int eventId = 0;
 
 
     Toolbar toolbar;
@@ -54,6 +61,11 @@ public class SheduleMessageActivity extends AppCompatActivity implements TokenCo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        SharedPreferences preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
+        userid = preferences.getString(AppConstant.LOGGED_IN_USER_ID, "");
+
 
         setContentView(R.layout.activity_shedule_message);
 
@@ -159,6 +171,8 @@ public class SheduleMessageActivity extends AppCompatActivity implements TokenCo
         body = message.getText().toString();
         Log.d(TAG, "message body: " + body);
 
+        messgeid = Utils.generateUniqueMessageId();
+
 
         String toParse = eddate + " " + edtime; // Results in "2-5-2012 20:43"
         SimpleDateFormat formatter = new SimpleDateFormat("d-M-yyyy hh:mm"); // I assume d-M, you may refer to M-d for month-day instead.
@@ -175,16 +189,45 @@ public class SheduleMessageActivity extends AppCompatActivity implements TokenCo
 
         Shedulermessagedata shedulermessagedata = new Shedulermessagedata();
         shedulermessagedata.setSenderid(senderid);
+        shedulermessagedata.setMessageid(messgeid);
         shedulermessagedata.setBody(body);
         shedulermessagedata.setTime(millis);
+        shedulermessagedata.setUserid(userid);
         Log.d(TAG, "Shedule: messagedata classs" + shedulermessagedata.toString());
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         databaseHandler.InsertSheduleMesage(shedulermessagedata);
 
-        time.setText("");
+        /*time.setText("");
         mdate.setText("");
         contactCompletionView.setText("");
-        message.setText("");
+        message.setText("");*/
+        setAlarm(millis);
+
+        finish();
+    }
+
+    private void setAlarm(long millis) {
+
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, SheduleMessageBroadcast.class);
+        intent.putExtra("sender", senderid);
+        intent.putExtra("message", body);
+        intent.putExtra("userid", userid);
+        intent.putExtra("timestamp", millis);
+        intent.putExtra("messageid", messgeid);
+        Log.d(TAG, "setAlarm: bodu " + body);
+        Log.d(TAG, "setAlarm: senderid "+senderid);
+
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, eventId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.d(TAG, "setAlarm: " + senderid);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, millis,
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
+        eventId++;
+
     }
 }
 

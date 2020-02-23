@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.smartchart.MessageActivity.BROADCAST;
 import static com.example.smartchart.Fragments.chats.BROADCAST_SEARCHBAR;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -50,7 +49,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Intent intent = new Intent(MessageActivity.UPDATE_MESSAGE_BRODCAST);
         intent.putExtra(AppConstant.BundleKeys.MESSAGE_ID, messageID);
         context.sendBroadcast(intent);
-        Log.d(TAG, "updateMessagestatus: "+AppConstant.BundleKeys.MESSAGE_ID);
+        Log.d(TAG, "updateMessagestatus: " + AppConstant.BundleKeys.MESSAGE_ID);
     }
 
     public static class User {
@@ -78,7 +77,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         public static final String TABLE_NAME = "Shedule";
         public static final String ID = "id";
         public static final String SENDER_ID = "sender_id";
-
+        public static final String MESSAGE_ID = "message_id";
         public static final String BODY = "body";
         public static final String TIME_STAMP = "time_stamp";
 
@@ -108,8 +107,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate: ");
 
 
-
-
         String createMessageQuery = "create table " + Messages.TABLE_NAME + " ( " +
                 Messages.ID + " integer primary key AUTOINCREMENT," +
                 Messages.SENDER_ID + " text, " +
@@ -119,23 +116,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Messages.DELVERY_STATUS + " text, " +
                 Messages.TIME_STAMP + " text);";
         sqLiteDatabase.execSQL(createMessageQuery);
-        Log.d(TAG, "onCreate: 123 message table"+createMessageQuery);
-
-
-
-
-
-
-
+        Log.d(TAG, "onCreate: 123 message table" + createMessageQuery);
 
 
         String createSheduleQuery = "create table " + Shedule.TABLE_NAME + " ( " +
                 Shedule.ID + " integer primary key AUTOINCREMENT," +
                 Shedule.SENDER_ID + " text, " +
                 Shedule.BODY + " text, " +
+                Shedule.MESSAGE_ID + " text, " +
                 Shedule.TIME_STAMP + " long);";
         sqLiteDatabase.execSQL(createSheduleQuery);
-        Log.d(TAG, "onCreate: Shedule  table :: "+createMessageQuery);
+        Log.d(TAG, "onCreate: Shedule  table :: " + createMessageQuery);
 
 
         String createChatQuery = "create table " + Chats.TABLE_NAME + " ( " +
@@ -160,7 +151,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put(Messages.SENDER_ID, message.getSenderId());
 
 
-       contentValues.put(Messages.DELVERY_STATUS, message.getDeliveryStatus());
+        contentValues.put(Messages.DELVERY_STATUS, message.getDeliveryStatus());
 
         long row = database.insertWithOnConflict(Messages.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
         Log.d(TAG, "Inside insertuser() -> Row : " + row);
@@ -169,7 +160,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Intent intent = new Intent(MessageActivity.BROADCAST);
         intent.putExtra("ConversionID", message.getConversionId());
 
-        intent.putExtra("deliverystatus",message.getDeliveryStatus() );
+        intent.putExtra("deliverystatus", message.getDeliveryStatus());
         intent.putExtra("messageId", messageId);
         context.sendBroadcast(intent);
 
@@ -191,20 +182,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Inside insertChat() -> Row : " + row);
     }
 
-
-    public  void InsertSheduleMesage(Shedulermessagedata shedulermessagedata){
+    public void InsertSheduleMesage(Shedulermessagedata shedulermessagedata) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(Shedule.SENDER_ID, shedulermessagedata.getSenderid());
         contentValues.put(Shedule.BODY, shedulermessagedata.getBody());
         contentValues.put(Shedule.TIME_STAMP, shedulermessagedata.getTime());
+        contentValues.put(Shedule.MESSAGE_ID, shedulermessagedata.getMessageid());
+
         long row = database.insertWithOnConflict(Shedule.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
 
         Log.d(TAG, "Inside shedulemessage() -> Row : " + row);
-
-
-
-
 
     }
 
@@ -277,7 +265,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String messageID = cursor.getString(cursor.getColumnIndex(Messages.MESSAGE_ID));
             String body = cursor.getString(cursor.getColumnIndex(Messages.BODY));
             String timeStamp = cursor.getString(cursor.getColumnIndex(Messages.TIME_STAMP));
-            String deliverystatus= cursor.getString(cursor.getColumnIndex(Messages.DELVERY_STATUS));
+            String deliverystatus = cursor.getString(cursor.getColumnIndex(Messages.DELVERY_STATUS));
             messages.setSenderId(senderId);
             messages.setConversionId(conversionId);
             messages.setMessageId(messageID);
@@ -287,10 +275,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             messages.setTimeStamp(timeStamp);
         }
         cursor.close();
-
         return messages;
     }
-
 
     public List<MessageData> getMessageData(String conversationID) {
 
@@ -309,16 +295,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String body = cursor.getString(cursor.getColumnIndex(Messages.BODY));
             String timeStamp = cursor.getString(cursor.getColumnIndex(Messages.TIME_STAMP));
 
+            String deliverystatus = cursor.getString(cursor.getColumnIndex(Messages.DELVERY_STATUS));
 
-
-
-            String deliverystatus= cursor.getString(cursor.getColumnIndex(Messages.DELVERY_STATUS));
-
-            Log.d(TAG, "getMessageData: "+deliverystatus);
+            Log.d(TAG, "getMessageData: " + deliverystatus);
 
             message.setDeliveryStatus(deliverystatus);
 
-        message.setSenderId(senderId);
+
+            message.setSenderId(senderId);
             message.setConversionId(conversionId);
             message.setMessageId(messageID);
             message.setBody(body);
@@ -329,6 +313,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         return messagelist;
+
+
     }
 
 
@@ -422,9 +408,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void search(String searchquery) {
-        Log.d(TAG, "search: "+searchquery);
+        Log.d(TAG, "search: " + searchquery);
         SQLiteDatabase database = this.getReadableDatabase();
-        Log.d(TAG, "search:1 "+searchquery);
+        Log.d(TAG, "search:1 " + searchquery);
         String query = "SELECT * FROM " + Chats.TABLE_NAME +
                 " JOIN " + User.TABLE_NAME +
                 " ON " + User.USER_ID + " = " + Chats.TABLE_NAME + "." + Chats.CONVERSION_ID +
@@ -471,80 +457,141 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             Log.d(TAG, "getChatData: conversation ID" + conversionId);
 
 
-
-
         }
 
-        Log.d( TAG, "listsize: "+searcher.size() );
-        Intent intent=new Intent(BROADCAST_SEARCHBAR);
-        intent.putExtra( "data", (Serializable) searcher);
-        context.sendBroadcast( intent );
- }
-/*
-    public void Contactsearch(String searchquery) {
-        Log.d(TAG, "search: "+searchquery);
-        SQLiteDatabase database = this.getReadableDatabase();
-        Log.d(TAG, "search:1 "+searchquery);
-        String query = "SELECT * FROM " + Chats.TABLE_NAME +
-                " JOIN " + User.TABLE_NAME +
-                " ON " + User.USER_ID + " = " + Chats.TABLE_NAME + "." + Chats.CONVERSION_ID +
-                " JOIN " + Messages.TABLE_NAME +
-                " ON " + Messages.TABLE_NAME + "." + Messages.MESSAGE_ID + " = " + Chats.TABLE_NAME + "." + Chats.MESSAGE_ID +
-                " WHERE " + User.USER_NAME + " LIKE '%" + searchquery + "%'" +
-                " ;";
-        Log.d(TAG, "getChatList: Query" + query);
-
-        Cursor cursor = database.rawQuery(query, null);
-        Log.d(TAG, "Cursor Count chat : " + cursor.getCount());
-        List<Chat> searcher = new ArrayList<>();
-
-        while (cursor.moveToNext()) {
-            Chat chat = new Chat();
-            Log.d(TAG, "get chat data: ");
-            String chatId = cursor.getString(cursor.getColumnIndex(Chats.CHATID));
-            String conversionId = cursor.getString(cursor.getColumnIndex(Chats.CONVERSION_ID));
-            String messageID = cursor.getString(cursor.getColumnIndex(Chats.MESSAGE_ID));
-            chat.setChatId(Integer.parseInt(chatId));
-            MessageData messageData = new MessageData();
-            messageData.setTimeStamp(cursor.getString(cursor.getColumnIndex(Messages.TIME_STAMP)));
-            messageData.setMessageId(messageId);
-            messageData.setConversionId(conversionId);
-            messageData.setBody(cursor.getString(cursor.getColumnIndex(Messages.BODY)));
-
-            chat.message = messageData;
-
-
-            Users userContacts = new Users();
-            String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
-            userContacts.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
-            userContacts.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
-            userContacts.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
-            // chat.user = userContacts;
-            chat.user = userContacts;
-
-            searcher.add(chat);
-
-
-            Log.d(TAG, "getChatData: Chat ID " + chatId);
-            Log.d(TAG, "getChatData: Name : " + fullName);
-            Log.d(TAG, "getChatData: message ID" + messageID);
-            Log.d(TAG, "getChatData: conversation ID" + conversionId);
-
-
-
-
-        }
-
-        Log.d( TAG, "listsize: "+searcher.size() );
-        Intent intent=new Intent(BROADCAST_SEARCHBAR);
-        intent.putExtra( "data", (Serializable) searcher);
-        context.sendBroadcast( intent );
+        Log.d(TAG, "listsize: " + searcher.size());
+        Intent intent = new Intent(BROADCAST_SEARCHBAR);
+        intent.putExtra("data", (Serializable) searcher);
+        context.sendBroadcast(intent);
     }
-*/
+
+    /*
+        public void Contactsearch(String searchquery) {
+            Log.d(TAG, "search: "+searchquery);
+            SQLiteDatabase database = this.getReadableDatabase();
+            Log.d(TAG, "search:1 "+searchquery);
+            String query = "SELECT * FROM " + Chats.TABLE_NAME +
+                    " JOIN " + User.TABLE_NAME +
+                    " ON " + User.USER_ID + " = " + Chats.TABLE_NAME + "." + Chats.CONVERSION_ID +
+                    " JOIN " + Messages.TABLE_NAME +
+                    " ON " + Messages.TABLE_NAME + "." + Messages.MESSAGE_ID + " = " + Chats.TABLE_NAME + "." + Chats.MESSAGE_ID +
+                    " WHERE " + User.USER_NAME + " LIKE '%" + searchquery + "%'" +
+                    " ;";
+            Log.d(TAG, "getChatList: Query" + query);
+
+            Cursor cursor = database.rawQuery(query, null);
+            Log.d(TAG, "Cursor Count chat : " + cursor.getCount());
+            List<Chat> searcher = new ArrayList<>();
+
+            while (cursor.moveToNext()) {
+                Chat chat = new Chat();
+                Log.d(TAG, "get chat data: ");
+                String chatId = cursor.getString(cursor.getColumnIndex(Chats.CHATID));
+                String conversionId = cursor.getString(cursor.getColumnIndex(Chats.CONVERSION_ID));
+                String messageID = cursor.getString(cursor.getColumnIndex(Chats.MESSAGE_ID));
+                chat.setChatId(Integer.parseInt(chatId));
+                MessageData messageData = new MessageData();
+                messageData.setTimeStamp(cursor.getString(cursor.getColumnIndex(Messages.TIME_STAMP)));
+                messageData.setMessageId(messageId);
+                messageData.setConversionId(conversionId);
+                messageData.setBody(cursor.getString(cursor.getColumnIndex(Messages.BODY)));
+
+                chat.message = messageData;
+
+
+                Users userContacts = new Users();
+                String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
+                userContacts.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
+                userContacts.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
+                userContacts.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
+                // chat.user = userContacts;
+                chat.user = userContacts;
+
+                searcher.add(chat);
+
+
+                Log.d(TAG, "getChatData: Chat ID " + chatId);
+                Log.d(TAG, "getChatData: Name : " + fullName);
+                Log.d(TAG, "getChatData: message ID" + messageID);
+                Log.d(TAG, "getChatData: conversation ID" + conversionId);
+
+
+
+
+            }
+
+            Log.d( TAG, "listsize: "+searcher.size() );
+            Intent intent=new Intent(BROADCAST_SEARCHBAR);
+            intent.putExtra( "data", (Serializable) searcher);
+            context.sendBroadcast( intent );
+        }
+    */
+    public List<Shedulermessagedata> getSheduleList() {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String query = "SELECT * FROM " + Shedule.TABLE_NAME +
+                " JOIN " + User.TABLE_NAME +
+                " ON " + User.USER_ID + " = " + Shedule.TABLE_NAME + "." + Shedule.SENDER_ID +
+                " ORDER BY " + Shedule.TIME_STAMP + " DESC"
+                + " ;";
+        Log.d(TAG, "getSheduleList: " + query);
+        Cursor cursor = database.rawQuery(query, null);
+        Log.d(TAG, "Cursor Count chat : " + cursor.getCount());
+        List<Shedulermessagedata> Shedlist = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            Chat chat = new Chat();
+            Log.d(TAG, "get chat data: ");
+            Shedulermessagedata messageData = new Shedulermessagedata();
+            Long time = cursor.getLong(cursor.getColumnIndex(Shedule.TIME_STAMP));
+            String messid = cursor.getString(cursor.getColumnIndex(Shedule.MESSAGE_ID));
+            String body = cursor.getString(cursor.getColumnIndex(Shedule.BODY));
+
+            messageData.setBody(body);
+            messageData.setMessageid(messid);
+            messageData.setTime(time);
+
+
+            /* chat.shedulermessagedata = messageData;*/
+
+
+            Users userContacts = new Users();
+            String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
+
+
+            String name =cursor.getString(cursor.getColumnIndex(User.USER_NAME));
+             String lastname =(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
+            String id =cursor.getString(cursor.getColumnIndex(User.USER_ID));
+            Users users = new Users();
+            users.setId(id);
+            users.setFirstname(name);
+            users.setLastname(lastname);
+
+            messageData.setUsers(users);
+
+            Log.d(TAG, "getSheduleList: -> messid " + messid);
+            Log.d(TAG, "getSheduleList: -> id " + id);
+            Log.d(TAG, "getSheduleList: -> fullname : " + fullName);
+            Log.d(TAG, "getSheduleList: -> time :" + time);
+
+            Log.d(TAG, "getSheduleList: -> bodvy :" + body);
+
+            Shedlist.add(messageData);
+            //Shedlist.add(userContacts);
+
+
+
+            Log.d(TAG, "getChatList: from shedlist  " + Shedlist);
+        }
+        cursor.close();
+        return Shedlist;
+    }
 
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+
+
+
 
     }
 }

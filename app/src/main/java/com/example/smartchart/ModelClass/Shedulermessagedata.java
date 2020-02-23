@@ -1,9 +1,43 @@
 package com.example.smartchart.ModelClass;
 
-public class Shedulermessagedata {
+import java.io.Serializable;
 
-    String id ,body,senderid;
-long time;
+public class Shedulermessagedata implements Serializable {
+
+    String id;
+    String body;
+    String senderid;
+    String messageid;
+
+    Users users;
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    String userid;
+
+    public String getMessageid() {
+        return messageid;
+    }
+
+    public void setMessageid(String messageid) {
+        this.messageid = messageid;
+    }
+
+    long time;
 
     public String getId() {
         return id;

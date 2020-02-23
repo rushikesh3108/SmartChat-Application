@@ -190,11 +190,6 @@ public class MessageActivity extends AppCompatActivity {
         }
     };
 
-    public  void deliverystatus(String delivery){
-
-        messageAdapter.Delivery(delivery);
-    }
-
 
     public void sendMessage(View view) {
         timeStamp = System.currentTimeMillis();

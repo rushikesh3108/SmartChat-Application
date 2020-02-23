@@ -2,7 +2,7 @@ package com.example.smartchart.ModelClass;
 
 import java.io.Serializable;
 
-public class Users implements Serializable {
+public class Users extends Shedulermessagedata implements Serializable {
     public String firstname,lastname,id,phonenumber;
     public Users(){
 
