@@ -101,7 +101,7 @@ public class MessageActivity extends AppCompatActivity {
         messageDatabaseHandler = new DatabaseHandler(this);
         recyclerView.setHasFixedSize(true);
 
-        IntentFilter intentFilter1=new IntentFilter(UPDATE_MESSAGE_BRODCAST);
+        IntentFilter intentFilter1 = new IntentFilter(UPDATE_MESSAGE_BRODCAST);
         registerReceiver(UpdateBroadcastReceiver, intentFilter1);
 
         messageDataList = new ArrayList<MessageData>();
@@ -142,17 +142,17 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private BroadcastReceiver UpdateBroadcastReceiver=new BroadcastReceiver() {
+    private BroadcastReceiver UpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle= intent.getExtras();
-            if ((bundle!= null)){
+            Bundle bundle = intent.getExtras();
+            if ((bundle != null)) {
 
-                String messageId =bundle.getString(AppConstant.BundleKeys.MESSAGE_ID);
+                String messageId = bundle.getString(AppConstant.BundleKeys.MESSAGE_ID);
 
                 DatabaseHandler updatedatabasehander = new DatabaseHandler(context);
                 MessageData message = updatedatabasehander.getMessageById(messageId);
-                Log.d(TAG, "onReceive: udate"+message);
+                Log.d(TAG, "onReceive: udate" + message);
                 messageAdapter.updateMessageToAdapter(message);
 
             }
@@ -170,8 +170,8 @@ public class MessageActivity extends AppCompatActivity {
                 Log.d(TAG, "onReceive: ");
 
                 String msgId = bundle.getString("messageId");
-                String delive= bundle.getString("deliverystatus");
-                Log.d(TAG, "onReceive broadcast for delivery status "+delive);
+                String delive = bundle.getString("deliverystatus");
+                Log.d(TAG, "onReceive broadcast for delivery status " + delive);
                 Log.d(TAG, "on BroadCast Receive: " + msgId);
 
 
@@ -191,6 +191,7 @@ public class MessageActivity extends AppCompatActivity {
     };
 
 
+
     public void sendMessage(View view) {
         timeStamp = System.currentTimeMillis();
 
@@ -198,6 +199,11 @@ public class MessageActivity extends AppCompatActivity {
 
 
         txtmessage = message.getText().toString().replace(" ", "_");
+        if (txtmessage.isEmpty()) {
+            message.setError("required");
+            message.requestFocus();
+            return;
+        }
 
         messageID = Utils.generateUniqueMessageId();
 
@@ -227,7 +233,7 @@ public class MessageActivity extends AppCompatActivity {
                 Log.d(TAG, "onResponse: " + response.code());
                 if (response.code() == 200) {
                     Log.d(TAG, "onResponse: MessageEntity send successfully");
-                  //  messageData.setDeliveryStatus("sucessfull");
+                    //  messageData.setDeliveryStatus("sucessfull");
 
                     Log.d(TAG, "onResponse: 12");
                     messageDatabaseHandler.updateMessagestatus(AppConstant.DELIVERY_STATUS_SENT, messageID);
@@ -243,7 +249,7 @@ public class MessageActivity extends AppCompatActivity {
         message.setText("");
     }
 
-    public void saveMessage(String senderID, String reciverID, String messageID, String body, String timeStamp ,String deliverystaus) {
+    public void saveMessage(String senderID, String reciverID, String messageID, String body, String timeStamp, String deliverystaus) {
 
         Log.d(TAG, "saveMessage: ");
         Log.d(TAG, "saveMessage: sernderID " + senderID);
@@ -264,7 +270,7 @@ public class MessageActivity extends AppCompatActivity {
         message.setSenderId(senderID);
         Log.d(TAG, "MessageEntity Class: " + message.toString());
 
-        Log.d(TAG, "saveMessage: delivery status  "+deliverystaus);
+        Log.d(TAG, "saveMessage: delivery status  " + deliverystaus);
 
         messageDatabaseHandler.insertMessage(message);
     }

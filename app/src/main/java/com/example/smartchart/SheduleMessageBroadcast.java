@@ -3,10 +3,7 @@ package com.example.smartchart;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.provider.Settings;
+
 import android.util.Log;
 
 import com.example.smartchart.Database.DatabaseHandler;
@@ -33,11 +30,11 @@ import retrofit2.Retrofit;
 public class SheduleMessageBroadcast extends BroadcastReceiver {
     private static final String TAG = "SheduleMessageBroadcast";
 
-
+    DatabaseHandler databaseHandler;
+    String messageid;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
 
 
         String Senderid = intent.getStringExtra("sender");
@@ -45,14 +42,13 @@ public class SheduleMessageBroadcast extends BroadcastReceiver {
 
         String userid = intent.getStringExtra("userid");
 
-        String messageid = intent.getStringExtra("messageid");
+        messageid = intent.getStringExtra("messageid");
 
         Long timetamp = intent.getLongExtra("timestamp", 0);
 
 
         Log.d(TAG, "onReceive: sheduller " + Body);
         Log.d(TAG, "onReceive:badsacs " + Senderid);
-
 
 
         MessageData message = new MessageData();
@@ -98,6 +94,7 @@ public class SheduleMessageBroadcast extends BroadcastReceiver {
                 if (response.code() == 200) {
                     Log.d(TAG, "onResponse: MessageEntity shedule send successfully");
                     //  messageData.setDeliveryStatus("sucessfull");
+                   // databaseHandler.updateMessagestatus(AppConstant.DELIVERY_STATUS_SENT,messageid);
 
                     Log.d(TAG, "onResponse: 12");
                 } else {

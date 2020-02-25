@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.smartchart.Fragments.Contacts.THIS_BROADCAST_FOR_CONTACT_SEARCHBAR;
 import static com.example.smartchart.Fragments.chats.BROADCAST_SEARCHBAR;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -465,67 +466,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         context.sendBroadcast(intent);
     }
 
-    /*
-        public void Contactsearch(String searchquery) {
-            Log.d(TAG, "search: "+searchquery);
-            SQLiteDatabase database = this.getReadableDatabase();
-            Log.d(TAG, "search:1 "+searchquery);
-            String query = "SELECT * FROM " + Chats.TABLE_NAME +
-                    " JOIN " + User.TABLE_NAME +
-                    " ON " + User.USER_ID + " = " + Chats.TABLE_NAME + "." + Chats.CONVERSION_ID +
-                    " JOIN " + Messages.TABLE_NAME +
-                    " ON " + Messages.TABLE_NAME + "." + Messages.MESSAGE_ID + " = " + Chats.TABLE_NAME + "." + Chats.MESSAGE_ID +
-                    " WHERE " + User.USER_NAME + " LIKE '%" + searchquery + "%'" +
-                    " ;";
-            Log.d(TAG, "getChatList: Query" + query);
+    public void Contactsearch(String contact) {
+        Log.d(TAG, "Contactsearch: " + contact);
+        SQLiteDatabase database = this.getReadableDatabase();
+        String query = "SELECT * FROM " + User.TABLE_NAME
+                + " WHERE " + User.USER_NAME + " LIKE '%" + contact + "%'"
+                + " ;";
+        Log.d(TAG, " contactquery : " + query);
 
-            Cursor cursor = database.rawQuery(query, null);
-            Log.d(TAG, "Cursor Count chat : " + cursor.getCount());
-            List<Chat> searcher = new ArrayList<>();
+        Cursor cursor = database.rawQuery(query, null);
+        List<Users> list = new ArrayList<>();
 
-            while (cursor.moveToNext()) {
-                Chat chat = new Chat();
-                Log.d(TAG, "get chat data: ");
-                String chatId = cursor.getString(cursor.getColumnIndex(Chats.CHATID));
-                String conversionId = cursor.getString(cursor.getColumnIndex(Chats.CONVERSION_ID));
-                String messageID = cursor.getString(cursor.getColumnIndex(Chats.MESSAGE_ID));
-                chat.setChatId(Integer.parseInt(chatId));
-                MessageData messageData = new MessageData();
-                messageData.setTimeStamp(cursor.getString(cursor.getColumnIndex(Messages.TIME_STAMP)));
-                messageData.setMessageId(messageId);
-                messageData.setConversionId(conversionId);
-                messageData.setBody(cursor.getString(cursor.getColumnIndex(Messages.BODY)));
-
-                chat.message = messageData;
-
-
-                Users userContacts = new Users();
-                String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
-                userContacts.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
-                userContacts.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
-                userContacts.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
-                // chat.user = userContacts;
-                chat.user = userContacts;
-
-                searcher.add(chat);
-
-
-                Log.d(TAG, "getChatData: Chat ID " + chatId);
-                Log.d(TAG, "getChatData: Name : " + fullName);
-                Log.d(TAG, "getChatData: message ID" + messageID);
-                Log.d(TAG, "getChatData: conversation ID" + conversionId);
-
-
-
-
-            }
-
-            Log.d( TAG, "listsize: "+searcher.size() );
-            Intent intent=new Intent(BROADCAST_SEARCHBAR);
-            intent.putExtra( "data", (Serializable) searcher);
-            context.sendBroadcast( intent );
+        while (cursor.moveToNext()) {
+            Users mUser = new Users();
+            mUser.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
+            mUser.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
+            mUser.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
+            mUser.setPhonenumber(cursor.getString(cursor.getColumnIndex(User.USER_MOBILE)));
+            list.add(mUser);
         }
-    */
+        Log.d(TAG, "listsize: " + list.size());
+
+        Intent intent = new Intent(THIS_BROADCAST_FOR_CONTACT_SEARCHBAR);
+        intent.putExtra("contactdata", (Serializable) list);
+        context.sendBroadcast(intent);
+    }
     public List<Shedulermessagedata> getSheduleList() {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + Shedule.TABLE_NAME +

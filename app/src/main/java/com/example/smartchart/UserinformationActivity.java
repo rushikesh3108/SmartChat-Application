@@ -52,7 +52,23 @@ public class UserinformationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String firstname=txt_firstname.getText().toString();
+                if (firstname.isEmpty()){
+                    txt_firstname.setError("required");
+                    txt_firstname.requestFocus();
+                    return;
+                }
                 String lastname=txt_lastname.getText().toString();
+
+
+
+            if (lastname.isEmpty()){
+                    txt_lastname.setError("required");
+                    txt_lastname.requestFocus();
+                    return;
+
+
+
+                }
                // String id=databaseReference.push().getKey(); get genrate id
 
                 byte[] bytesEncoded = Base64.encode(phonenumber.getBytes(),Base64.DEFAULT);

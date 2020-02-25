@@ -54,6 +54,7 @@ public class PhonenumberVerificationActivity extends AppCompatActivity {
     */
     Pinview pinview;
 
+
     private static final String TAG = "PhonenumberVerification";
 
     @Override

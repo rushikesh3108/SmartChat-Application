@@ -1,6 +1,9 @@
 package com.example.smartchart.Fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +39,7 @@ import java.util.List;
 public class
 Contacts extends Fragment {
 
+    public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
   public ContactsRecyclerAdapter adapter;
 
@@ -248,6 +252,27 @@ Contacts extends Fragment {
 
     }
 
+    private BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            List<Users> data = ( List<Users> ) intent.getSerializableExtra( "contactdata" );
+            Log.d(TAG, "message_sended: "+data);
+            adapter.setCollection( data );
+        }
+    };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter intentFilter1=new IntentFilter( THIS_BROADCAST_FOR_CONTACT_SEARCHBAR );
+        getActivity().registerReceiver( broadcastReceiver,intentFilter1 );
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver( broadcastReceiver);
+
+    }
 }

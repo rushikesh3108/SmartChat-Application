@@ -90,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 Log.d(TAG, "onQueryTextChange: "+newText);
                 databaseHandler.search(newText);
+                databaseHandler.Contactsearch(newText);
 
 
                 return false;
