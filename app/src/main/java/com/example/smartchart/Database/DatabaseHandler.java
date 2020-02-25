@@ -3,6 +3,7 @@ package com.example.smartchart.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -16,11 +17,13 @@ import com.example.smartchart.ModelClass.Chat;
 import com.example.smartchart.ModelClass.MessageData;
 import com.example.smartchart.ModelClass.Shedulermessagedata;
 import com.example.smartchart.ModelClass.Users;
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.smartchart.Fragments.Contacts.THIS_BROADCAST_FOR_CONTACT_SEARCHBAR;
 import static com.example.smartchart.Fragments.chats.BROADCAST_SEARCHBAR;
 
@@ -311,6 +314,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             messagelist.add(message);
             Log.d(TAG, "getMessageData: Msg data " + body);
             Log.d(TAG, "getMessageData: messagelist" + messagelist.toString());
+            for (int i = 0; i <= messagelist.size(); i++) {
+                String message1f = message.getMessageId();
+                Log.d(TAG, "getConversionID1: " + message1f);
+
+                Intent intent = new Intent(MessageActivity.MESSAGEID_STATUS_UPDATE);
+                intent.putExtra("Messagestatus", message1f);
+                context.sendBroadcast(intent);
+            }
         }
         cursor.close();
         return messagelist;
@@ -551,6 +562,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return Shedlist;
     }
 
+
+
+
+    public List<MessageData> Pendingmessagesupdate() {
+        List<MessageData> MessagePendingList = new ArrayList<>();
+        SQLiteDatabase data = this.getReadableDatabase();
+        String query = "SELECT * FROM " + Messages.TABLE_NAME + " WHERE " + Messages.DELVERY_STATUS + " = '" + "message pendding" + "';";
+        Cursor cursor = data.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            MessageData message = new MessageData();
+
+            message.setMessageId(cursor.getString(cursor.getColumnIndex(Messages.MESSAGE_ID)));
+            MessagePendingList.add(message);
+            for(int i=0;i<=MessagePendingList.size();i++){
+                String messagepending=message.messageId;
+                Log.d(TAG, "Pendingmessagesupdate_Status: "+messagepending);
+
+                SharedPreferences preferences = context.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                Gson gson = new Gson();
+                String jsonFavorites = gson.toJson(MessagePendingList);
+                editor.putString(AppConstant.PENDING_MESSAGE_SENDTO_DATABASE,jsonFavorites);
+                editor.apply();
+            }
+        }
+
+        cursor.close();
+        return MessagePendingList;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {

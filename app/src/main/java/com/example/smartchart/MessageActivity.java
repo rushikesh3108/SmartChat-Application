@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,8 +32,10 @@ import com.example.smartchart.Retrofit.Data;
 import com.example.smartchart.Retrofit.FCMAPI;
 import com.example.smartchart.Retrofit.MessageEntity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -40,10 +44,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static com.example.smartchart.AppConstant.DELIVERY_STATUS_SENT;
+import static com.example.smartchart.AppConstant.PENDING_MESSAGE_SENDTO_DATABASE;
+
+
 public class MessageActivity extends AppCompatActivity {
     private static final String TAG = "MessageActivity";
     public static final String BROADCAST = "broadcast RECEIVER";
     public static final String UPDATE_MESSAGE_BRODCAST = "update_message_broadcast";
+    public static final String MESSAGEID_STATUS_UPDATE = "messageID status update";
 
     String reciverID, name, mobile, txtmessage, senderID, messageID;
 
@@ -55,7 +64,7 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     MessageAdapter messageAdapter;
 
-
+    SharedPreferences preferences;
     Toolbar mtoolbar;
 
     List<MessageData> messageDataList;
@@ -65,6 +74,9 @@ public class MessageActivity extends AppCompatActivity {
     Context context;
 
     DatabaseHandler messageDatabaseHandler;
+    private NetworkChangeReceiver receiver;
+    private boolean isConnected = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +103,24 @@ public class MessageActivity extends AppCompatActivity {
         textView.setText(name);
 
 
-        SharedPreferences preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
+         preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
         senderID = preferences.getString(AppConstant.LOGGED_IN_USER_ID, "");
 
         //Broadcastadb
         IntentFilter intentFilter = new IntentFilter(BROADCAST);
         registerReceiver(broadcastReceiver, intentFilter);
+
+        IntentFilter intentFilter2 = new IntentFilter(MESSAGEID_STATUS_UPDATE);
+        receiver = new NetworkChangeReceiver();
+        registerReceiver(receiver, intentFilter2);
+
+
+        //INTERNET AUTO DETETCTED
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver();
+        registerReceiver(receiver, filter);
+
+
 
         messageDatabaseHandler = new DatabaseHandler(this);
         recyclerView.setHasFixedSize(true);
@@ -139,6 +163,8 @@ public class MessageActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
         unregisterReceiver(UpdateBroadcastReceiver);
+        unregisterReceiver(receiver);
+
     }
 
 
@@ -160,6 +186,55 @@ public class MessageActivity extends AppCompatActivity {
 
         }
     };
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            String MessageIDStatus = null;
+            Bundle bundle = intent.getExtras();
+            if ((bundle != null)) {
+                MessageIDStatus = bundle.getString("Messagestatus");
+
+            }
+            isNetworkAvailable(context, MessageIDStatus);
+        }
+
+        public void isNetworkAvailable(Context context, String messageID) {
+
+            ConnectivityManager connectivity = (ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity != null) {
+                NetworkInfo[] info = connectivity.getAllNetworkInfo();
+
+                if (info != null) {
+                    for (int i = 0; i < info.length; i++) {
+                        if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                            if (!isConnected) {
+
+                                if(preferences.contains(PENDING_MESSAGE_SENDTO_DATABASE)){
+                                    String result = preferences.getString(AppConstant.PENDING_MESSAGE_SENDTO_DATABASE, null);
+                                    Gson gson = new Gson();
+                                    MessageData[] favoriteItems = gson.fromJson(result, MessageData[].class);
+                                    messageDataList = Arrays.asList(favoriteItems);
+                                    Log.d(TAG, "onCreate+Messageid: "+messageDataList);
+                                    for(MessageData data:messageDataList) {
+                                        Log.d(TAG, "isNetworkAvailableb: "+data.getMessageId());
+                                        messageDatabaseHandler.updateMessagestatus(DELIVERY_STATUS_SENT,data.getMessageId() );
+                                    }
+                                }
+                                messageDatabaseHandler.updateMessagestatus(DELIVERY_STATUS_SENT, messageID);
+
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+            isConnected = false;
+        }
+    }
+
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
@@ -243,6 +318,10 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+
+                messageDatabaseHandler.Pendingmessagesupdate();
+
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });

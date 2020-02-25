@@ -8,6 +8,8 @@ public class AppConstant {
     public static final String LOGGED_IN_USER_CONTACT_NUMBER="logged_in_user_contact_number;";
     public static final String DELIVERY_STATUS_PENDING = "pending";
     public static final String DELIVERY_STATUS_SENT = "sent";
+    public static final String PENDING_MESSAGE_SENDTO_DATABASE="message update databse";
+
 
     public static class BundleKeys {
         public static final String MESSAGE_ID  = "message_id";
