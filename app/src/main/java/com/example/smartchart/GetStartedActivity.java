@@ -25,7 +25,8 @@ public class GetStartedActivity extends AppCompatActivity {
     @OnClick(R.id.getstarted)
     public void getstareted(View view) {
         Intent intent=new Intent(this,PhoneNumberInsertionActivity.class);
-        startActivity(intent);
+        startActivity(intent);finish();
+
     }
 
 

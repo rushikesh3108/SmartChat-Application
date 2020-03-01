@@ -14,4 +14,7 @@ public class AppConstant {
     public static class BundleKeys {
         public static final String MESSAGE_ID  = "message_id";
     }
+    public class ImageURI{
+        public static final String ProfileImageUri="profile_image_uri";
+    }
 }

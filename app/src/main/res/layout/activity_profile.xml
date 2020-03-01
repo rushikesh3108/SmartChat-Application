@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECEFF1"
+    tools:context=".ProfileActivity">
+
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/circularimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+             />
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider.Horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/Imageusername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear" />
+
+
+    <ImageView
+        android:id="@+id/Imageusername"
+        android:layout_width="63dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="44dp"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/account"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear" />
+
+    <TextView
+        android:id="@+id/Name"
+        android:layout_width="237dp"
+        android:layout_height="31dp"
+        android:layout_marginTop="64dp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/Imageusername"
+        app:layout_constraintTop_toBottomOf="@id/linear" />
+
+    <ImageView
+        android:id="@+id/ImageNumber"
+        android:layout_width="63dp"
+        android:layout_height="61dp"
+        android:src="@drawable/accountphone"
+        app:layout_constraintStart_toStartOf="@id/Imageusername"
+        app:layout_constraintTop_toBottomOf="@id/Imageusername" />
+
+    <TextView
+        android:id="@+id/Number"
+        android:layout_width="237dp"
+        android:layout_height="31dp"
+        android:layout_marginTop="28dp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toEndOf="@id/ImageNumber"
+        app:layout_constraintTop_toBottomOf="@id/Name" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

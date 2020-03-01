@@ -1,10 +1,12 @@
 package com.example.smartchart;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -108,5 +110,16 @@ public class HomeActivity extends AppCompatActivity {
 
         searchView.setMenuItem(menuItem);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case  R.id.profile:
+                Intent intent =new Intent(HomeActivity.this,ProfileActivity.class);
+                startActivity(intent);
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
