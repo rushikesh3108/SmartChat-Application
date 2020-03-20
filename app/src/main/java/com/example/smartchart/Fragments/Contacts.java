@@ -41,18 +41,18 @@ Contacts extends Fragment {
 
     public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
-  public ContactsRecyclerAdapter adapter;
+    public ContactsRecyclerAdapter adapter;
 
     public Context context;
-
+    String userID, userName, userSurName, userMobile, image;
     public DatabaseReference databaseUser;
 
     public FirebaseDatabase firebaseDatabase;
 
     public View view;
 
-      RecyclerView recyclerView;
-     List<Users> userList;
+    RecyclerView recyclerView;
+    List<Users> userList;
 
     List<String> userContactList;
 
@@ -60,13 +60,12 @@ Contacts extends Fragment {
 
     String mLoggedInUserContactNumber;
 
-    
-    
+
     Users user;
 
     private static final String TAG = "Contacts";
-    
-    
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,7 +74,6 @@ Contacts extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
 
 
     public Contacts() {
@@ -106,27 +104,27 @@ Contacts extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: of ContactFragment");
 
-      //  Log.d(TAG, "onCreateView: "+user);
+        //  Log.d(TAG, "onCreateView: "+user);
         //Log.d(TAG, "onCreateView: "+userList);
 
         context = container.getContext();
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_contacts, container, false);
+        view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        user=new Users();
+        user = new Users();
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayout = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayout);
 
-        DividerItemDecoration decoration = new DividerItemDecoration(context,DividerItemDecoration.VERTICAL);
+        DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(decoration);
 
         mSharedPreferences = context.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        mLoggedInUserContactNumber = mSharedPreferences.getString(AppConstant.LOGGED_IN_USER_CONTACT_NUMBER,null);
+        mLoggedInUserContactNumber = mSharedPreferences.getString(AppConstant.LOGGED_IN_USER_CONTACT_NUMBER, null);
 
 
-        DatabaseHandler databaseHandler=new DatabaseHandler(context);
+        DatabaseHandler databaseHandler = new DatabaseHandler(context);
 
         //fetch Data From Database
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -142,66 +140,65 @@ Contacts extends Fragment {
             databaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onDataChanging "+dataSnapshot);
+                    Log.d(TAG, "onDataChanging " + dataSnapshot);
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         user = userSnapshot.getValue(Users.class);
-                        Log.d(TAG, "ondatvdcuhbscvscbsdhvsvdbvsyvuh dsygdiygyvs d sy dus dvcysdvo"+ user);
-                        if(mLoggedInUserContactNumber!=null && !mLoggedInUserContactNumber.equalsIgnoreCase(user.getPhonenumber()))
-                        {
+                        Log.d(TAG, "ondatvdcu   " + user);
+                        if (mLoggedInUserContactNumber != null && !mLoggedInUserContactNumber.equalsIgnoreCase(user.getPhonenumber())) {
 
-                            String userID, userName, userSurName, userMobile;
+
                             userID = user.getId().toString().trim();
                             userName = user.getFirstname().toString().trim();
                             userSurName = user.getLastname().toString().trim();
                             userMobile = user.getPhonenumber().toString().trim();
-                            Log.d(TAG, "onDataChange: user Data"+userID+","+userName+","+userSurName+","+userMobile);
-                            Log.d(TAG, "onDataChange: inside If");
-                            Log.d(TAG, "onDataChange: "+user.toString());
+                            image = user.getProfileImageURI();
 
-                            Users userContact=new Users();
+
+                            Log.d(TAG, "onDataChange: user Data" + userID + "," + userName + "," + userSurName + "," + userMobile);
+
+                            Log.d(TAG, "onDataChange: " + user.toString());
+
+                            //Offline data will save in databas
+                            Users userContact = new Users();
                             userContact.setFirstname(userName);
                             userContact.setLastname(userSurName);
                             userContact.setPhonenumber(userMobile);
                             userContact.setId(userID);
+                            userContact.setProfileImageURI(image);
                             Log.d(TAG, "onDataChange: ");
-                            if(!userContactList.contains(userID))
-                            {
-                                Log.d(TAG, "onDataChange: inside If"+userList+"\n"+userID);
+                            if (!userContactList.contains(userID)) {
+                                Log.d(TAG, "onDataChange: inside If" + userList + "\n" + userID);
                                 databaseHandler.insertUser(userContact);
-                            }
-                            else{
-                                Log.d(TAG, "onDataChange: inside else"+userList+"\n"+userID);
+                            } else {
+                                Log.d(TAG, "onDataChange: inside else" + userList + "\n" + userID);
                             }
                             Log.d(TAG, "Insert Tag");
-                           userList.add(user);
-                        }
-                        else {
+                            userList.add(user);
+                        } else {
                             checkCurrentUser();
 
                             //Log.d(TAG, "onDataChange: inside Else");
                         }
-                       Log.d(TAG, "onDataChange: UserId  " +user.getId());
+                        Log.d(TAG, "onDataChange: UserId  " + user.getId());
                     }
-                   Log.d(TAG, " UserContactList "+ databaseHandler.displayUserContact());
+                    Log.d(TAG, " UserContactList " + databaseHandler.displayUserContact());
                     adapter.setContactList(userList);
 
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                   // Log.w(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
 
 
-          //  Log.d(TAG, "onCreateView: ");
-          //  Log.d(TAG, "Database Size: "+databaseHandler.displayUserID().size());
-        }catch (Exception e){
-            Log.e(TAG, "Exception: "+e.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "Exception: " + e.toString());
         }
 
         adapter = new ContactsRecyclerAdapter(context, databaseHandler.displayUserContact());
         Log.d(TAG, "after Send Adapter: " + adapter);
-       Log.d(TAG, "onCreateView: " + userList);
+        Log.d(TAG, "onCreateView: " + userList);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -225,26 +222,26 @@ Contacts extends Fragment {
         super.onDetach();
 
     }
-    private void checkCurrentUser()
-    {
-        
+
+    private void checkCurrentUser() {
+
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(AppConstant.LOGGED_IN_USER_NAME,user.getFirstname().trim()+" "+user.getLastname().trim());
-        editor.putString(AppConstant.LOGGED_IN_USER_ID,user.getId());
+        editor.putString(AppConstant.LOGGED_IN_USER_NAME, user.getFirstname().trim() + " " + user.getLastname().trim());
+        editor.putString(AppConstant.LOGGED_IN_USER_ID, user.getId());
         editor.apply();
         Log.d(TAG, "checkCurrentUser: ");
         FirebaseMessaging.getInstance().subscribeToTopic(user.getId())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    
+
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "onComplete: 1");
                         String msg = getString(R.string.msg_subscribed);
-                        Log.d(TAG, "onComplete: "+msg);
+                        Log.d(TAG, "onComplete: " + msg);
                         if (!task.isSuccessful()) {
                             msg = getString(R.string.msg_subscribe_failed);
                         }
-                        Log.d(TAG, "onComplete:1 "+msg);
+                        Log.d(TAG, "onComplete:1 " + msg);
                         Log.d(TAG, msg);
                     }
                 });
@@ -252,27 +249,27 @@ Contacts extends Fragment {
 
     }
 
-    private BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            List<Users> data = ( List<Users> ) intent.getSerializableExtra( "contactdata" );
-            Log.d(TAG, "message_sended: "+data);
-            adapter.setCollection( data );
+            List<Users> data = (List<Users>) intent.getSerializableExtra("contactdata");
+            Log.d(TAG, "message_sended: " + data);
+            adapter.setCollection(data);
         }
     };
 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter intentFilter1=new IntentFilter( THIS_BROADCAST_FOR_CONTACT_SEARCHBAR );
-        getActivity().registerReceiver( broadcastReceiver,intentFilter1 );
+        IntentFilter intentFilter1 = new IntentFilter(THIS_BROADCAST_FOR_CONTACT_SEARCHBAR);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter1);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver( broadcastReceiver);
+        getActivity().unregisterReceiver(broadcastReceiver);
 
     }
 }

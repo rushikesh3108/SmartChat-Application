@@ -4,16 +4,25 @@ import java.io.Serializable;
 
 public class Users extends Shedulermessagedata implements Serializable {
     public String firstname,lastname,id,phonenumber;
+    private String ProfileImageURI;
     public Users(){
 
     }
 
-    public Users(String firstname, String lastname, String id, String phonenumber) {
+    public Users(String firstname, String lastname, String id, String phonenumber, String profileImageURI) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.id = id;
         this.phonenumber = phonenumber;
+        ProfileImageURI = profileImageURI;
     }
+    /* public Users(String firstname, String lastname, String id, String phonenumber ) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.id = id;
+
+        this.phonenumber = phonenumber;
+    }*/
 
     public String getFirstname() {
         return firstname;
@@ -41,6 +50,14 @@ public class Users extends Shedulermessagedata implements Serializable {
 
     public String getPhonenumber() {
         return phonenumber;
+    }
+
+    public String getProfileImageURI() {
+        return ProfileImageURI;
+    }
+
+    public void setProfileImageURI(String profileImageURI) {
+        ProfileImageURI = profileImageURI;
     }
 
     public void setPhonenumber(String phonenumber) {

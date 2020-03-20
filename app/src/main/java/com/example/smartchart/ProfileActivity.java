@@ -25,14 +25,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.example.smartchart.AppConstant.LOGGED_IN_USER_ID;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
@@ -75,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
         String url = sharedPreferences.getString(AppConstant.ImageURI.ProfileImageUri, null);
         if (url == null) {
-            Profileimage.setImageResource(R.mipmap.avatar);
+            Profileimage.setImageResource(R.drawable.account);
         } else {
 
             Glide.with(this.getApplicationContext()).load(url).into(Profileimage);
@@ -105,6 +110,15 @@ public class ProfileActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(AppConstant.ImageURI.ProfileImageUri, url);
                     editor.apply();
+
+
+                    String base64id=sharedPreferences.getString(LOGGED_IN_USER_ID,null);
+                    FirebaseDatabase database= FirebaseDatabase.getInstance();
+                    DatabaseReference myRef =database.getReference("Users").child(base64id.concat("=="));
+
+                    HashMap<String,Object> hashMap=new HashMap<>();
+                    hashMap.put("profileImageURI",url);
+                    myRef.updateChildren(hashMap);
                 }
             });
 

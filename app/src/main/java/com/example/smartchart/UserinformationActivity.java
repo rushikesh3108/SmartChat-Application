@@ -23,7 +23,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class UserinformationActivity extends AppCompatActivity {
 
 
-    EditText txt_firstname,txt_lastname;
+    Users users;
+
+    EditText txt_firstname, txt_lastname;
     Button btn_save;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -37,65 +39,64 @@ public class UserinformationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinformation);
-        txt_firstname=findViewById(R.id.firstname);
-        txt_lastname=findViewById(R.id.lastname);
-        btn_save=findViewById(R.id.submit);
+        txt_firstname = findViewById(R.id.firstname);
+        txt_lastname = findViewById(R.id.lastname);
+        btn_save = findViewById(R.id.submit);
 
         phonenumber = getIntent().getStringExtra("phonenumber");
 
         Log.d(TAG, "onCreate: ");
-        databaseReference=FirebaseDatabase.getInstance().getReference("Users");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
-        firebaseAuth=FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstname=txt_firstname.getText().toString();
-                if (firstname.isEmpty()){
+                String firstname = txt_firstname.getText().toString();
+                if (firstname.isEmpty()) {
                     txt_firstname.setError("required");
                     txt_firstname.requestFocus();
                     return;
                 }
-                String lastname=txt_lastname.getText().toString();
+                String lastname = txt_lastname.getText().toString();
+                /*users.setProfileImageURI("default");
+*/
 
-
-
-            if (lastname.isEmpty()){
+                if (lastname.isEmpty()) {
                     txt_lastname.setError("required");
                     txt_lastname.requestFocus();
                     return;
 
 
-
                 }
-               // String id=databaseReference.push().getKey(); get genrate id
+                // String id=databaseReference.push().getKey(); get genrate id
 
-                byte[] bytesEncoded = Base64.encode(phonenumber.getBytes(),Base64.DEFAULT);
-                String Base64id= new String(bytesEncoded);
-
-
-                String id=Base64id.replace("==","").trim(); //base 64 id to send for messeage
+                byte[] bytesEncoded = Base64.encode(phonenumber.getBytes(), Base64.DEFAULT);
+                String Base64id = new String(bytesEncoded);
 
 
+                String id = Base64id.replace("==", "").trim(); //base 64 id to send for messeage
 
-                if (TextUtils.isEmpty(firstname)){
+
+                if (TextUtils.isEmpty(firstname)) {
                     Toast.makeText(UserinformationActivity.this, "please enter firstname", Toast.LENGTH_SHORT).show();
                 }
 
-                if (TextUtils.isEmpty(lastname)){
+                if (TextUtils.isEmpty(lastname)) {
                     Toast.makeText(UserinformationActivity.this, "please enter lastname", Toast.LENGTH_SHORT).show();
                 }
+                String profileimageURI = "default";
 
                 Log.d(TAG, "onComplete after");
-                Users information=new Users(firstname,lastname,id,phonenumber);
-
+                Users information = new Users(firstname, lastname, id, phonenumber,profileimageURI );
+                Log.d(TAG, "onClick: userinfo "+information);
                 FirebaseDatabase.getInstance().getReference("Users")
                         .child(new String(bytesEncoded).trim())
                         .setValue(information).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Intent intent =new Intent(UserinformationActivity.this,HomeActivity.class);
+                        Intent intent = new Intent(UserinformationActivity.this, HomeActivity.class);
 
                         //intent of new activity
                         Toast.makeText(UserinformationActivity.this, "logged in successfully", Toast.LENGTH_SHORT).show();

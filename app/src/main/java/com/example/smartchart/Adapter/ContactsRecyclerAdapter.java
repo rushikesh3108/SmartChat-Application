@@ -2,6 +2,10 @@ package com.example.smartchart.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.bumptech.glide.Glide;
 import com.example.smartchart.MessageActivity;
 import com.example.smartchart.ModelClass.Users;
 import com.example.smartchart.R;
@@ -75,7 +80,15 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         ColorGenerator generator = ColorGenerator.DEFAULT;
         int color = generator.getRandomColor();
 
-        TextDrawable drawable = TextDrawable.builder().buildRound(s, color);
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(s, color);
+
+        Drawable d = new BitmapDrawable(drawableToBitmap(drawable));
+
+        Glide.with(mContext)
+                .load(userContacts.getProfileImageURI())
+                .placeholder(d)
+                .into(holder.image);
         holder.image.setImageDrawable(drawable);
 
         //String umob = userContacts.getUserMobileno().toString();
@@ -100,6 +113,25 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
     }
 
+    //converter is required for circleimageview does not support the textdrawable to drawable
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+
+        int width = drawable.getIntrinsicWidth();
+        width = width > 0 ? width : 96; // Replaced the 1 by a 96
+        int height = drawable.getIntrinsicHeight();
+        height = height > 0 ? height : 96; // Replaced the 1 by a 96
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
 
     public void setContactList(List<Users> contactList) {
         if (mUserList != null)

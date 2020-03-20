@@ -129,10 +129,7 @@ public class PhonenumberVerificationActivity extends AppCompatActivity {
                             Log.w(TAG, "Failed to read value.", error.toException());
                         }
                     });
-                   /* Intent intent = new Intent(PhonenumberVerificationActivity.this,UserinformationActivity.class);
-                    intent.putExtra("phonenumber", phonenumber);
-                    startActivity(intent);
-                    Log.d(TAG, "onComplete: 1");*/
+
                 } else {
                     Toast.makeText(PhonenumberVerificationActivity.this, "error", Toast.LENGTH_SHORT).show();
                 }
