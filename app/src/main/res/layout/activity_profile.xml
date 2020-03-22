@@ -11,21 +11,26 @@
         android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="290dp"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circularimage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-             />
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:civ_border_color="#ffffff"
+            app:civ_border_width="2dp" />
     </LinearLayout>
+
     <View
         android:id="@+id/divider"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@id/Imageusername"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,11 +51,13 @@
 
     <TextView
         android:id="@+id/Name"
-        android:layout_width="237dp"
-        android:layout_height="31dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="64dp"
         android:fontFamily="sans-serif-medium"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="helloworld "
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@id/Imageusername"
         app:layout_constraintTop_toBottomOf="@id/linear" />
 
@@ -64,12 +71,13 @@
 
     <TextView
         android:id="@+id/Number"
-        android:layout_width="237dp"
-        android:layout_height="31dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
         android:fontFamily="sans-serif-medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.51"
+        android:text="hello worlsd "
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@id/ImageNumber"
         app:layout_constraintTop_toBottomOf="@id/Name" />
 
