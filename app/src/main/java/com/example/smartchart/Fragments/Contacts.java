@@ -1,11 +1,14 @@
 package com.example.smartchart.Fragments;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -111,7 +114,19 @@ Contacts extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
+
         user = new Users();
+
+
+        //Notification ChannelID
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel( "mynotification", "mynotification", NotificationManager.IMPORTANCE_DEFAULT );
+            NotificationManager notificationManager = getActivity().getSystemService( NotificationManager.class );
+            notificationManager.createNotificationChannel( channel );
+        }
+
+
+
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayout = new LinearLayoutManager(context);

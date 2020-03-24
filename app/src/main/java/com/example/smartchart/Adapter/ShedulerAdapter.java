@@ -1,7 +1,9 @@
 package com.example.smartchart.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,9 +42,9 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
     private static final String TAG = "ShedulerAdapter";
 
     public ShedulerAdapter(List<Shedulermessagedata> shedulermessageList, Context context) {
-        shedulermessagedataList = shedulermessageList;
+        this.shedulermessagedataList = shedulermessageList;
         Log.d(TAG, "ShedulerAdapter: " + shedulermessagedataList.size());
-        mcontext = context;
+        this.mcontext = context;
     }
 
 
@@ -55,11 +57,16 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
         ViewHolder viewHolder = new ViewHolder(view);
         mydialog = new Dialog(mcontext);
         mydialog.setContentView(R.layout.shedulerdialog);
-      //  String name = shedulermessagedata.getUsers().getFirstname().toString().trim().substring(0, 1).toUpperCase() + shedulermessagedata.getUsers().getFirstname().toString().trim().substring(1).toLowerCase();
+        //  String name = shedulermessagedata.getUsers().getFirstname().toString().trim().substring(0, 1).toUpperCase() + shedulermessagedata.getUsers().getFirstname().toString().trim().substring(1).toLowerCase();
 
+/*
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                String name =shedulermessagedataList.get().getUsers().getFirstname().toString().trim().substring(0, 1).toUpperCase() + shedulermessagedata.getUsers().getFirstname().toString().trim().substring(1).toLowerCase();
+
                 //Toast.makeText(mcontext, "Dialog box oped ", Toast.LENGTH_SHORT).show();
                 TextView tv1 = mydialog.findViewById(R.id.dialog_name);
                 TextView tv2 = mydialog.findViewById(R.id.dialog_number);
@@ -68,6 +75,7 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
 
             }
         });
+*/
 
 
         Log.d(TAG, "onCreateViewHolder: ");
@@ -84,7 +92,7 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
         Log.d(TAG, "onBindViewHolder:  shedlist name " + name);
         String surname = shedulermessagedata.getUsers().getLastname().toString().trim().substring(0, 1).toUpperCase() + shedulermessagedata.getUsers().getLastname().toString().trim().substring(1).toLowerCase();
 
-         fullname = name + " " + surname;
+        fullname = name + " " + surname;
 
         String body = shedulermessagedata.getBody().toString();
         String var = convertDate(String.valueOf(shedulermessagedata.getTime()), "dd/MM/yyyy hh:mm aa");
@@ -105,18 +113,37 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
         holder.timestamp.setText(var);
 
 
-/*
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
 
+                Log.d(TAG, "onClick: shedulemessage " + fullname);
                 TextView tv1 = mydialog.findViewById(R.id.dialog_name);
-                TextView tv2 = mydialog.findViewById(R.id.dialog_number);
-                tv1.setText("hello how are you");
-                Toast.makeText(mcontext, "dialogboxyy " + String.valueOf(holder.getAdapterPosition()), Toast.LENGTH_SHORT).show();
+                TextView tv2 = mydialog.findViewById(R.id.message);
+                TextView tv3 = mydialog.findViewById(R.id.showdate);
+                TextView tv4 = mydialog.findViewById(R.id.timeshow);
+
+                String showeddate=convertDate(String.valueOf(shedulermessagedataList.get(position).getTime()),"dd/MM/yyyy");
+                String showedtime=convertDate(String.valueOf(shedulermessagedataList.get(position).getTime()),"hh:mm aa");
+
+                Log.d(TAG, "onClick: date of shedule popup "+showeddate);
+                String toname = shedulermessagedataList.get(position).getUsers().getFirstname().toString();
+
+                String tosurname = shedulermessagedataList.get(position).getUsers().getLastname().toString();
+                String tofullname = toname + " " + tosurname;
+                Log.d(TAG, "onClick: toname " + tofullname);
+                String body=shedulermessagedataList.get(position).getBody().toString();
+                tv1.setText(tofullname);
+                tv2.setText(body);
+                tv3.setText(showeddate);
+                tv4.setText(showedtime);
+
+                mydialog.show();
+                Toast.makeText(mcontext, "Dialog box opened ", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mcontext, "dialogboxyy " + String.valueOf(holder.getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
         });
-*/
 
     }
 
