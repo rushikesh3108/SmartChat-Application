@@ -45,7 +45,7 @@ Contacts extends Fragment {
     public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
     public ContactsRecyclerAdapter adapter;
-
+    String msg;
     public Context context;
     String userID, userName, userSurName, userMobile, image;
     public DatabaseReference databaseUser;
@@ -251,7 +251,9 @@ Contacts extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "onComplete: 1");
-                        String msg = getString(R.string.msg_subscribed);
+                        // msg = getString(R.string.msg_subscribed);
+                          msg="subscribe";
+
                         Log.d(TAG, "onComplete: " + msg);
                         if (!task.isSuccessful()) {
                             msg = getString(R.string.msg_subscribe_failed);

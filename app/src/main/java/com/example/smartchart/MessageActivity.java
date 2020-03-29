@@ -25,6 +25,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.smartchart.Adapter.MessageAdapter;
 import com.example.smartchart.Database.DatabaseHandler;
 import com.example.smartchart.ModelClass.MessageData;
@@ -101,6 +103,15 @@ public class MessageActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate mobileno : ");
         name = getIntent().getStringExtra("name");
         textView.setText(name);
+
+
+        ColorGenerator generator = ColorGenerator.DEFAULT;
+
+        int color = generator.getRandomColor();
+        String s =name.substring(0,1);
+        TextDrawable drawable1 = TextDrawable.builder().buildRound(s, color);
+
+        imageView.setImageDrawable(drawable1);
 
 
          preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);

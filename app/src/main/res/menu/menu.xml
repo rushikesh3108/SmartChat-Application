@@ -15,5 +15,16 @@
         app:showAsAction="never"
         />
 
-
+    <item
+        android:id="@+id/darkmode"
+        android:title="Dark Mode"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/lightmode"
+        android:title="Light Mode"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
 </menu>

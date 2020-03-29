@@ -12,9 +12,9 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/tele123"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/tele123"
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/AppTheme"

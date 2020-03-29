@@ -6,6 +6,7 @@
     <color name="colorAccent">#079285</color>
     <color name="name">#262626</color>
     <color name="messagecard">#79008577</color>
+    <color name="merr">#F44336</color>
 
 
 </resources>

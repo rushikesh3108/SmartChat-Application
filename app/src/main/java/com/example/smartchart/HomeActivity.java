@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
@@ -53,7 +54,6 @@ public class HomeActivity extends AppCompatActivity {
         tablist.add("sheduller");
 
 
-
         myPagerAadpter = new MyPagerAadpter(getSupportFragmentManager(), tablist);
         viewPager.setAdapter(myPagerAadpter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -90,7 +90,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                Log.d(TAG, "onQueryTextChange: "+newText);
+                Log.d(TAG, "onQueryTextChange: " + newText);
                 databaseHandler.search(newText);
                 databaseHandler.Contactsearch(newText);
 
@@ -114,11 +114,22 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case  R.id.profile:
-                Intent intent =new Intent(HomeActivity.this,ProfileActivity.class);
+        switch (item.getItemId()) {
+            case R.id.profile:
+                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
+            case R.id.darkmode:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+               // getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
+                Intent intent1 = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent1);
+                finish();
+            case R.id.lightmode:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                Intent intent2 = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent2);
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }

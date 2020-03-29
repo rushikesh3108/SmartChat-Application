@@ -140,7 +140,7 @@ public class ShedulerAdapter extends RecyclerView.Adapter<ShedulerAdapter.ViewHo
                 tv4.setText(showedtime);
 
                 mydialog.show();
-                Toast.makeText(mcontext, "Dialog box opened ", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mcontext, "Dialog box opened ", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(mcontext, "dialogboxyy " + String.valueOf(holder.getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
         });
