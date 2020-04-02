@@ -102,6 +102,7 @@ public class MessageActivity extends AppCompatActivity {
         mobile = intent.getStringExtra("number");
         Log.d(TAG, "onCreate mobileno : ");
         name = getIntent().getStringExtra("name");
+        Log.d(TAG, "onCreate: name = "+name);
         textView.setText(name);
 
 
