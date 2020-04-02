@@ -14,12 +14,12 @@
         android:hardwareAccelerated="false"
         android:icon="@drawable/tele123"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@drawable/tele123"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".SheduleMessageActivity" />
 
         <service

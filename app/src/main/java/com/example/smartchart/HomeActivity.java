@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
@@ -52,6 +51,10 @@ public class HomeActivity extends AppCompatActivity {
         tablist.add("chats");
         tablist.add("contacts");
         tablist.add("sheduller");
+
+
+
+
 
 
         myPagerAadpter = new MyPagerAadpter(getSupportFragmentManager(), tablist);
@@ -118,18 +121,18 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.profile:
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
-            case R.id.darkmode:
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+           /* case R.id.darkmode:
+               // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                // getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                Log.d(TAG, "onOptionsItemSelected: dark mode ");
+               *//* Intent intent1 = new Intent( HomeActivity.this, Darkmode.class);
+                startActivity(intent1);*//*
 
-                Intent intent1 = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(intent1);
-                finish();
             case R.id.lightmode:
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                *//*AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 Intent intent2 = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent2);
-                finish();
+                finish();*/
         }
         return super.onOptionsItemSelected(item);
     }

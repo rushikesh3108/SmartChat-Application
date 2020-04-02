@@ -57,7 +57,7 @@ public class FcmService extends FirebaseMessagingService {
             messagedata.setMessageId(messageId);
             Log.d(TAG, "onMessageReceived: "+messageId);
             messagedata.setBody(messageBody);
-            Log.d(TAG, "onMessageReceived: "+messageBody);
+            Log.d(TAG, "onMessageReceived: body "+messageBody);
             messagedata.setConversionId(conversationId);
             Log.d(TAG, "onMessageReceived: "+conversationId);
             messagedata.setSenderId(senderId);
@@ -65,6 +65,8 @@ public class FcmService extends FirebaseMessagingService {
             messagedata.setTimeStamp(timeStamp);
             Log.d(TAG, "onMessageReceived: "+timeStamp);
            messageDatabaseHandler.insertMessage(messagedata);
+           MessaageBody=messageBody;
+
         }
 
         catch (Exception e)
@@ -80,11 +82,11 @@ public class FcmService extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(new NotificationCompat.BigTextStyle())
                 .setSound( RingtoneManager.getDefaultUri( RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon( R.mipmap.ic_launcher)
+                .setSmallIcon( R.drawable.tele123)
                 .setContentIntent( pendingIntent )
                 .setDefaults( Notification.DEFAULT_SOUND)
                 .setAutoCancel(true);
-        Log.d( TAG, "onMessageReceived: "+MessaageBody );
+        Log.d( TAG, "onMessageReceived:body  "+MessaageBody );
         Log.d( TAG, "onMessageReceived: "+Title );
 
         NotificationManager notificationManager =

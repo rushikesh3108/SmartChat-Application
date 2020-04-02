@@ -59,7 +59,7 @@ public class MessageActivity extends AppCompatActivity {
     String reciverID, name, mobile, txtmessage, senderID, messageID;
 
     private long timeStamp;
-
+    String s;
     FloatingActionButton btnSend;
     TextView textView;
     ImageView imageView;
@@ -108,7 +108,7 @@ public class MessageActivity extends AppCompatActivity {
         ColorGenerator generator = ColorGenerator.DEFAULT;
 
         int color = generator.getRandomColor();
-        String s =name.substring(0,1);
+        s =name.substring(0,1);
         TextDrawable drawable1 = TextDrawable.builder().buildRound(s, color);
 
         imageView.setImageDrawable(drawable1);
