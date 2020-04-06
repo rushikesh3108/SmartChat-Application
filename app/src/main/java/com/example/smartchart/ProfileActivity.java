@@ -80,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
         String url = sharedPreferences.getString(AppConstant.ImageURI.ProfileImageUri, null);
         if (url == null) {
-            Profileimage.setImageResource(R.drawable.account);
+            Profileimage.setImageResource(R.drawable.accuser);
         } else {
 
             Glide.with(this.getApplicationContext()).load(url).into(Profileimage);

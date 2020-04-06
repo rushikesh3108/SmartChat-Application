@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.smartchart.ModelClass.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,7 +26,7 @@ public class UserinformationActivity extends AppCompatActivity {
 
     Users users;
 
-    EditText txt_firstname, txt_lastname;
+    TextInputEditText txt_firstname, txt_lastname;
     Button btn_save;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
@@ -61,7 +62,7 @@ public class UserinformationActivity extends AppCompatActivity {
                 }
                 String lastname = txt_lastname.getText().toString();
                 /*users.setProfileImageURI("default");
-*/
+                 */
 
                 if (lastname.isEmpty()) {
                     txt_lastname.setError("required");
@@ -87,17 +88,18 @@ public class UserinformationActivity extends AppCompatActivity {
                     Toast.makeText(UserinformationActivity.this, "please enter lastname", Toast.LENGTH_SHORT).show();
                 }
                 String profileimageURI = "default";
+                String status="default";
 
                 Log.d(TAG, "onComplete after");
-                Users information = new Users(firstname, lastname, id, phonenumber,profileimageURI );
-                Log.d(TAG, "onClick: userinfo "+information);
+                Users information = new Users(firstname, lastname, id, phonenumber, profileimageURI,status);
+                Log.d(TAG, "onClick: userinfo " + information);
                 FirebaseDatabase.getInstance().getReference("Users")
                         .child(new String(bytesEncoded).trim())
                         .setValue(information).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Intent intent = new Intent(UserinformationActivity.this, HomeActivity.class);
-
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         //intent of new activity
                         Toast.makeText(UserinformationActivity.this, "logged in successfully", Toast.LENGTH_SHORT).show();
                         startActivity(intent);

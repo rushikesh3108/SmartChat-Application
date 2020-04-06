@@ -34,10 +34,13 @@ import com.example.smartchart.Retrofit.Data;
 import com.example.smartchart.Retrofit.FCMAPI;
 import com.example.smartchart.Retrofit.MessageEntity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -47,6 +50,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static com.example.smartchart.AppConstant.DELIVERY_STATUS_SENT;
+import static com.example.smartchart.AppConstant.LOGGED_IN_USER_ID;
 import static com.example.smartchart.AppConstant.PENDING_MESSAGE_SENDTO_DATABASE;
 
 
@@ -72,6 +76,7 @@ public class MessageActivity extends AppCompatActivity {
     List<MessageData> messageDataList;
     EditText message;
 
+    FloatingActionButton scrolldownbutton;
 
     Context context;
 
@@ -86,11 +91,12 @@ public class MessageActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_message);
         btnSend = findViewById(R.id.send);
-        message = findViewById(R.id.txtmessage);
+scrolldownbutton=findViewById(R.id.scroll_down_button);
+
         mtoolbar = findViewById(R.id.msgtool_bar);
         textView = findViewById(R.id.text);
         imageView = findViewById(R.id.Image);
-
+        message = findViewById(R.id.txtmessage);
         recyclerView = findViewById(R.id.recycler_view);
 
 
@@ -102,21 +108,21 @@ public class MessageActivity extends AppCompatActivity {
         mobile = intent.getStringExtra("number");
         Log.d(TAG, "onCreate mobileno : ");
         name = getIntent().getStringExtra("name");
-        Log.d(TAG, "onCreate: name = "+name);
+        Log.d(TAG, "onCreate: name = " + name);
         textView.setText(name);
 
 
         ColorGenerator generator = ColorGenerator.DEFAULT;
 
         int color = generator.getRandomColor();
-        s =name.substring(0,1);
+        s = name.substring(0, 1);
         TextDrawable drawable1 = TextDrawable.builder().buildRound(s, color);
 
         imageView.setImageDrawable(drawable1);
 
 
-         preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
-        senderID = preferences.getString(AppConstant.LOGGED_IN_USER_ID, "");
+        preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
+        senderID = preferences.getString(LOGGED_IN_USER_ID, "");
 
         //Broadcastadb
         IntentFilter intentFilter = new IntentFilter(BROADCAST);
@@ -131,7 +137,6 @@ public class MessageActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkChangeReceiver();
         registerReceiver(receiver, filter);
-
 
 
         messageDatabaseHandler = new DatabaseHandler(this);
@@ -159,6 +164,29 @@ public class MessageActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
 
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dx==0 && dy==0){
+                    scrolldownbutton.hide();
+                }else if(dy<0 ){
+                    scrolldownbutton.show();
+                }else if(dy > 0){
+                    scrolldownbutton.hide();
+                }
+            }
+        });
+
+        scrolldownbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                recyclerView.smoothScrollToPosition(messageAdapter.getItemCount());
+
+            }
+        });
     }
 
     @Override
@@ -198,6 +226,7 @@ public class MessageActivity extends AppCompatActivity {
 
         }
     };
+
     public class NetworkChangeReceiver extends BroadcastReceiver {
 
         @Override
@@ -223,15 +252,15 @@ public class MessageActivity extends AppCompatActivity {
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected) {
 
-                                if(preferences.contains(PENDING_MESSAGE_SENDTO_DATABASE)){
+                                if (preferences.contains(PENDING_MESSAGE_SENDTO_DATABASE)) {
                                     String result = preferences.getString(AppConstant.PENDING_MESSAGE_SENDTO_DATABASE, null);
                                     Gson gson = new Gson();
                                     MessageData[] favoriteItems = gson.fromJson(result, MessageData[].class);
                                     messageDataList = Arrays.asList(favoriteItems);
-                                    Log.d(TAG, "onCreate+Messageid: "+messageDataList);
-                                    for(MessageData data:messageDataList) {
-                                        Log.d(TAG, "isNetworkAvailableb: "+data.getMessageId());
-                                        messageDatabaseHandler.updateMessagestatus(DELIVERY_STATUS_SENT,data.getMessageId() );
+                                    Log.d(TAG, "onCreate+Messageid: " + messageDataList);
+                                    for (MessageData data : messageDataList) {
+                                        Log.d(TAG, "isNetworkAvailableb: " + data.getMessageId());
+                                        messageDatabaseHandler.updateMessagestatus(DELIVERY_STATUS_SENT, data.getMessageId());
                                     }
                                 }
                                 messageDatabaseHandler.updateMessagestatus(DELIVERY_STATUS_SENT, messageID);
@@ -276,7 +305,6 @@ public class MessageActivity extends AppCompatActivity {
 
         }
     };
-
 
 
     public void sendMessage(View view) {
@@ -364,5 +392,23 @@ public class MessageActivity extends AppCompatActivity {
         Log.d(TAG, "saveMessage: delivery status  " + deliverystaus);
 
         messageDatabaseHandler.insertMessage(message);
+    }
+    public void status(String status){
+        SharedPreferences sharedPreferences =this.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        String base64id=sharedPreferences.getString(LOGGED_IN_USER_ID,null);
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        assert base64id != null;
+        DatabaseReference myRef =database.getReference("Users").child(base64id.concat("=="));
+
+        Log.d(TAG, "status: "+status + myRef);
+
+        HashMap<String,Object> hashMap=new HashMap<>();
+        hashMap.put("status",status);
+        myRef.updateChildren(hashMap);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
     }
 }

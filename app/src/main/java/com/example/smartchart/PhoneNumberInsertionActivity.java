@@ -8,12 +8,14 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class PhoneNumberInsertionActivity extends AppCompatActivity {
-    EditText editText;
+    TextInputEditText editText;
 
     @BindView(R.id.next)
     Button next_button;

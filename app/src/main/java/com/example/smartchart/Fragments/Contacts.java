@@ -1,5 +1,6 @@
 package com.example.smartchart.Fragments;
 
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -39,8 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class
-Contacts extends Fragment {
+public class Contacts extends Fragment {
 
     public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
@@ -63,8 +63,8 @@ Contacts extends Fragment {
 
     String mLoggedInUserContactNumber;
 
-
     Users user;
+
 
     private static final String TAG = "Contacts";
 
@@ -115,16 +115,17 @@ Contacts extends Fragment {
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
 
-        user = new Users();
+/*
+   user = new Users();
+*/
 
 
         //Notification ChannelID
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel( "mynotification", "mynotification", NotificationManager.IMPORTANCE_DEFAULT );
-            NotificationManager notificationManager = getActivity().getSystemService( NotificationManager.class );
-            notificationManager.createNotificationChannel( channel );
+            NotificationChannel channel = new NotificationChannel("mynotification", "mynotification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
-
 
 
         recyclerView = view.findViewById(R.id.recycler);
@@ -252,7 +253,7 @@ Contacts extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "onComplete: 1");
                         // msg = getString(R.string.msg_subscribed);
-                          msg="subscribe";
+                        msg = "subscribe";
 
                         Log.d(TAG, "onComplete: " + msg);
                         if (!task.isSuccessful()) {

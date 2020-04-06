@@ -4,8 +4,8 @@
     <string name="next">next</string>
     <string name="verify">verify</string>
     <string name="welcome">Welcome to SmartChat</string>
-    <string name="name">enter the name </string>
-    <string name="lastname">enter the last name </string>
+    <string name="name">First name </string>
+    <string name="lastname">Last name </string>
     <string name="submit">submit</string>
 
     <string name="enternumber">enter the phone number</string>

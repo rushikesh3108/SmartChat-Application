@@ -7,46 +7,95 @@
     tools:context=".UserinformationActivity">
 
 
-    <EditText
+    <!--
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:hint="@string/name"
+            android:textSize="28sp"
+            android:layout_margin="20dp"
+            android:id="@+id/firstname"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            />
+    -->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlinedTextField"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:hint="@string/name"
-        android:textSize="28sp"
 
-        android:layout_margin="20dp"
-        android:id="@+id/firstname"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/firstname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
 
-        />
-    <EditText
+            android:textSize="28sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+   <!-- <EditText
+        android:id="@+id/lastname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lastname"
         android:layout_marginStart="20dp"
         android:hint="@string/lastname"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:textSize="28sp"
-        app:layout_constraintTop_toBottomOf="@id/firstname"
+        app:layout_constraintTop_toBottomOf="@id/outlinedTextField"
 
-        />
-    <com.google.android.material.button.MaterialButton
+        />-->
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlinedTextField1"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cornerRadius="25dp"
-        android:layout_margin="16dp"
-        android:text="@string/submit"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/lastname"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/lastname"
+        app:layout_constraintTop_toBottomOf="@id/outlinedTextField"
 
-        android:paddingTop="16dp"
+
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/lastname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+
+            android:textSize="28sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        />
+        android:text="@string/submit"
+
+        android:textSize="20sp"
+        app:cornerRadius="25dp"
+        app:layout_constraintTop_toBottomOf="@id/outlinedTextField1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

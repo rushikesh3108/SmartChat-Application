@@ -1,6 +1,8 @@
 package com.example.smartchart;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,10 +17,17 @@ import com.example.smartchart.Adapter.MyPagerAadpter;
 import com.example.smartchart.Database.DatabaseHandler;
 import com.example.smartchart.ModelClass.Chat;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.example.smartchart.AppConstant.LOGGED_IN_USER_ID;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -135,5 +144,31 @@ public class HomeActivity extends AppCompatActivity {
                 finish();*/
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void status(String status){
+        SharedPreferences sharedPreferences =this.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        String base64id=sharedPreferences.getString(LOGGED_IN_USER_ID,null);
+        if(base64id==null){
+            Log.d(TAG, "status: ");
+        }else {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Users").child(base64id.concat("=="));
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("status", status);
+            myRef.updateChildren(hashMap);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }
