@@ -11,10 +11,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -40,14 +42,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class Contacts extends Fragment {
 
     public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
+    public static final String THIS_BROADCAST_FOR_CONTACT_STATUS="this broadcast is for contact status ";
+
     public ContactsRecyclerAdapter adapter;
     String msg;
     public Context context;
-    String userID, userName, userSurName, userMobile, image;
+    String userID, userName, userSurName, userMobile, image, status;
     public DatabaseReference databaseUser;
 
     public FirebaseDatabase firebaseDatabase;
@@ -103,6 +108,12 @@ public class Contacts extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        context.unregisterReceiver(contactstatus);
+        super.onDestroyView();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: of ContactFragment");
@@ -127,6 +138,9 @@ public class Contacts extends Fragment {
             notificationManager.createNotificationChannel(channel);
         }
 
+
+        IntentFilter intentFilter=new IntentFilter(THIS_BROADCAST_FOR_CONTACT_STATUS);
+        context.registerReceiver(contactstatus,intentFilter);
 
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
@@ -159,7 +173,8 @@ public class Contacts extends Fragment {
                     Log.d(TAG, "onDataChanging " + dataSnapshot);
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         user = userSnapshot.getValue(Users.class);
-                        Log.d(TAG, "ondatvdcu   " + user);
+
+
                         if (mLoggedInUserContactNumber != null && !mLoggedInUserContactNumber.equalsIgnoreCase(user.getPhonenumber())) {
 
 
@@ -168,9 +183,10 @@ public class Contacts extends Fragment {
                             userSurName = user.getLastname().toString().trim();
                             userMobile = user.getPhonenumber().toString().trim();
                             image = user.getProfileImageURI();
+                            status = user.getStatus();
 
 
-                            Log.d(TAG, "onDataChange: user Data" + userID + "," + userName + "," + userSurName + "," + userMobile);
+                            Log.d(TAG, " user Data : " + userName + "," + userSurName + "," + status);
 
                             Log.d(TAG, "onDataChange: " + user.toString());
 
@@ -180,11 +196,20 @@ public class Contacts extends Fragment {
                             userContact.setLastname(userSurName);
                             userContact.setPhonenumber(userMobile);
                             userContact.setId(userID);
+                            userContact.setStatus(status);
                             userContact.setProfileImageURI(image);
                             Log.d(TAG, "onDataChange: ");
+
+
+                            Log.d(TAG, "onDataChange: UserId  broadcastsend  " + user.getStatus() + "," + user.getPhonenumber());
+
+
                             if (!userContactList.contains(userID)) {
                                 Log.d(TAG, "onDataChange: inside If" + userList + "\n" + userID);
                                 databaseHandler.insertUser(userContact);
+                                databaseHandler.updatetheprofileImageandstatus(image, status, userMobile);
+
+
                             } else {
                                 Log.d(TAG, "onDataChange: inside else" + userList + "\n" + userID);
                             }
@@ -195,7 +220,6 @@ public class Contacts extends Fragment {
 
                             //Log.d(TAG, "onDataChange: inside Else");
                         }
-                        Log.d(TAG, "onDataChange: UserId  " + user.getId());
                     }
                     Log.d(TAG, " UserContactList " + databaseHandler.displayUserContact());
                     adapter.setContactList(userList);
@@ -211,11 +235,61 @@ public class Contacts extends Fragment {
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.toString());
         }
-
         adapter = new ContactsRecyclerAdapter(context, databaseHandler.displayUserContact());
         Log.d(TAG, "after Send Adapter: " + adapter);
         Log.d(TAG, "onCreateView: " + userList);
         recyclerView.setAdapter(adapter);
+       // mrunnable.run();
+        databaseUser.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, " value event  " + dataSnapshot);
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    user = userSnapshot.getValue(Users.class);
+
+
+                    if (mLoggedInUserContactNumber != null && !mLoggedInUserContactNumber.equalsIgnoreCase(user.getPhonenumber())) {
+
+
+                        userID = user.getId().toString().trim();
+                        userName = user.getFirstname().toString().trim();
+                        userSurName = user.getLastname().toString().trim();
+                        userMobile = user.getPhonenumber().toString().trim();
+                        image = user.getProfileImageURI();
+                        status = user.getStatus();
+
+
+                        Log.d(TAG, " user Data : " + userName + "," + userSurName + "," + status);
+
+                        Log.d(TAG, "onDataChange: " + user.toString());
+
+                        //Offline data will save in databas
+                        Users userContact = new Users();
+                        userContact.setFirstname(userName);
+                        userContact.setLastname(userSurName);
+                        userContact.setPhonenumber(userMobile);
+                        userContact.setId(userID);
+                        userContact.setStatus(status);
+                        userContact.setProfileImageURI(image);
+                        Log.d(TAG, "onDataChange: ");
+
+
+                        Log.d(TAG, "onDataChange: UserId  broadcastsend  " + user.getStatus() + "," + user.getPhonenumber());
+                        DatabaseHandler mdata = new DatabaseHandler(context);
+                        mdata.updatetheprofileImageandstatus(image, status, userMobile);
+
+                        databaseHandler.displayUserContact();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
 
         return view;
 
@@ -226,6 +300,16 @@ public class Contacts extends Fragment {
     public void onButtonPressed(Uri uri) {
 
     }
+
+    private BroadcastReceiver contactstatus =new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            List<Users> data = (List<Users>) intent.getSerializableExtra("contactstatus");
+            Log.d(TAG, "message_sended:123 :  " + data);
+            adapter.setCollection(data);
+
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -238,6 +322,7 @@ public class Contacts extends Fragment {
         super.onDetach();
 
     }
+
 
     private void checkCurrentUser() {
 
@@ -282,6 +367,7 @@ public class Contacts extends Fragment {
         IntentFilter intentFilter1 = new IntentFilter(THIS_BROADCAST_FOR_CONTACT_SEARCHBAR);
         getActivity().registerReceiver(broadcastReceiver, intentFilter1);
 
+
     }
 
     @Override
@@ -290,4 +376,7 @@ public class Contacts extends Fragment {
         getActivity().unregisterReceiver(broadcastReceiver);
 
     }
+
+
+
 }

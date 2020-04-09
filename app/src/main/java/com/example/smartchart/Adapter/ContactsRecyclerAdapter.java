@@ -20,6 +20,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
 import com.example.smartchart.MessageActivity;
+import com.example.smartchart.ModelClass.MessageData;
 import com.example.smartchart.ModelClass.Users;
 import com.example.smartchart.R;
 
@@ -30,6 +31,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
     private List<Users> mUserList;
     private Context mContext;
+
     Users userContacts;
 
     public ContactsRecyclerAdapter(Context context, List<Users> userlist) {
@@ -64,9 +66,11 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         Log.d(TAG, "onBindViewHolder: surname " + surname);
 
         String fullName = name + " " + surname;
-        Log.d(TAG, "onBindViewHolder: " + fullName);
+        Log.d(TAG, "onBindViewHolder: status" + fullName+","+userContacts.getStatus());
 
         String mobile = userContacts.getPhonenumber().toString();
+       String status= userContacts.getStatus().toString();
+        //Log.d(TAG, "onBindViewHolder: status :  "+userContacts.getStatus());
 
         String userId = userContacts.getId().toString();
         Log.d(TAG, "onBindViewHolder: " + userId);
@@ -100,11 +104,13 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
                 Log.d(TAG, "onClick: ReciverUserId " + userId);
 
                 Log.d(TAG, "onClick: number " + userContacts.getPhonenumber());
-                Log.d(TAG, "onClick: number " + mobile);
+                Log.d(TAG, "onClick: number123 " + mobile+","+status);
+               // Log.d(TAG, "onClick:  status " +userContacts.getStatus());
 
                 Intent intent = new Intent(mContext, MessageActivity.class);
                 intent.putExtra("ReciverUserID", userId);
                 intent.putExtra("number", mobile);
+                intent.putExtra("status",status);
                 intent.putExtra("name", fullName);
                 mContext.startActivity(intent);
 
@@ -150,6 +156,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         mUserList = data;
         notifyDataSetChanged();
     }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView txtUserName;

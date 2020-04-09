@@ -57,11 +57,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
-    public void Delivery(String delivery) {
-        Log.d(TAG, "Delivery: " + delivery);
-
-
-    }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {

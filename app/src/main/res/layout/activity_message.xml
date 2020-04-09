@@ -8,34 +8,54 @@
     android:background="#ECEFF1"
     tools:context=".MessageActivity">
 
-   <androidx.appcompat.widget.Toolbar
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:id="@+id/msgtool_bar"
-       android:background="@color/colorPrimary"
-       app:layout_constraintTop_toTopOf="parent">
-       <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/msgtool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/Image"
                 android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/swat"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text"
-                android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="80dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/background" />
+                android:text="hello"
+                android:textColor="@color/background"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/Image" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:text="satys"
+                android:textColor="@color/background"
+                app:layout_constraintStart_toEndOf="@id/Image"
+                app:layout_constraintTop_toBottomOf="@id/text"
 
-   </androidx.appcompat.widget.Toolbar>
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -48,19 +68,19 @@
 
 
         />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/scroll_down_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom"
-         android:layout_marginEnd="18dp"
+        android:layout_marginEnd="18dp"
         android:layout_marginBottom="13dp"
+        android:backgroundTint="#A0A0A0"
+        android:elevation="20dp"
         android:src="@drawable/downarraw"
         app:fabSize="mini"
-        android:elevation="20dp"
-        android:backgroundTint="#A0A0A0"/>
-
+        app:layout_constraintBottom_toTopOf="@id/bottom"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <RelativeLayout
@@ -82,10 +102,10 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_toLeftOf="@id/send"
-            android:scrollbars="vertical"
             android:background="@drawable/roundtextview"
             android:hint="Type a message..."
             android:padding="16dp"
+            android:scrollbars="vertical"
             android:textSize="14sp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

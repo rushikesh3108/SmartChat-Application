@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.service.voice.AlwaysOnHotwordDetector;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,13 +60,15 @@ public class MessageActivity extends AppCompatActivity {
     public static final String BROADCAST = "broadcast RECEIVER";
     public static final String UPDATE_MESSAGE_BRODCAST = "update_message_broadcast";
     public static final String MESSAGEID_STATUS_UPDATE = "messageID status update";
+    public static final String STATUSCHECKER = "statuschecker";
 
-    String reciverID, name, mobile, txtmessage, senderID, messageID;
+
+    String reciverID, name, mobile, txtmessage, senderID, messageID, profileImage, status, number;
 
     private long timeStamp;
     String s;
     FloatingActionButton btnSend;
-    TextView textView;
+    TextView textView, textViewStatus;
     ImageView imageView;
     RecyclerView recyclerView;
     MessageAdapter messageAdapter;
@@ -86,13 +89,19 @@ public class MessageActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_message);
         btnSend = findViewById(R.id.send);
-scrolldownbutton=findViewById(R.id.scroll_down_button);
-
+        scrolldownbutton = findViewById(R.id.scroll_down_button);
+        textViewStatus = findViewById(R.id.status);
         mtoolbar = findViewById(R.id.msgtool_bar);
         textView = findViewById(R.id.text);
         imageView = findViewById(R.id.Image);
@@ -106,11 +115,12 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
         //reciverID=intent.getStringExtra("ReceiverUserID1");
         Log.d(TAG, "onCreate reciver id :  " + reciverID);
         mobile = intent.getStringExtra("number");
-        Log.d(TAG, "onCreate mobileno : ");
         name = getIntent().getStringExtra("name");
+        status = getIntent().getStringExtra("status");
+        Log.d(TAG, "onCreate: status  : " + status);
         Log.d(TAG, "onCreate: name = " + name);
         textView.setText(name);
-
+        textViewStatus.setText(status);
 
         ColorGenerator generator = ColorGenerator.DEFAULT;
 
@@ -131,12 +141,24 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
         IntentFilter intentFilter2 = new IntentFilter(MESSAGEID_STATUS_UPDATE);
         receiver = new NetworkChangeReceiver();
         registerReceiver(receiver, intentFilter2);
+/*
 
+        IntentFilter intentstatusChecker = new IntentFilter(STATUS_CHECK);
+        registerReceiver(StatusChecker, intentstatusChecker);
+*/
 
         //INTERNET AUTO DETETCTED
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkChangeReceiver();
         registerReceiver(receiver, filter);
+
+/*
+
+        IntentFilter intentFilter12 = new IntentFilter(STATUSCHECKER);
+        Log.d(TAG, "onResume: 01");
+        registerReceiver(statuscheckker, intentFilter12);
+        Log.d(TAG, "onResume: 02 ");
+*/
 
 
         messageDatabaseHandler = new DatabaseHandler(this);
@@ -169,11 +191,11 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dx==0 && dy==0){
+                if (dx == 0 && dy == 0) {
                     scrolldownbutton.hide();
-                }else if(dy<0 ){
+                } else if (dy < 0) {
                     scrolldownbutton.show();
-                }else if(dy > 0){
+                } else if (dy > 0) {
                     scrolldownbutton.hide();
                 }
             }
@@ -189,6 +211,7 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
         });
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -202,9 +225,9 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
+        // unregisterReceiver(statuscheckker);
         unregisterReceiver(UpdateBroadcastReceiver);
         unregisterReceiver(receiver);
-
     }
 
 
@@ -275,7 +298,12 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
             isConnected = false;
         }
     }
-
+  /* private BroadcastReceiver statuscheckker=new BroadcastReceiver() {
+       @Override
+       public void onReceive(Context context, Intent intent) {
+           Log.d(TAG, "onReceive: 32   ");
+       }
+   };*/
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
@@ -393,22 +421,26 @@ scrolldownbutton=findViewById(R.id.scroll_down_button);
 
         messageDatabaseHandler.insertMessage(message);
     }
-    public void status(String status){
-        SharedPreferences sharedPreferences =this.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        String base64id=sharedPreferences.getString(LOGGED_IN_USER_ID,null);
-        FirebaseDatabase database= FirebaseDatabase.getInstance();
+
+    public void status(String status) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        String base64id = sharedPreferences.getString(LOGGED_IN_USER_ID, null);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         assert base64id != null;
-        DatabaseReference myRef =database.getReference("Users").child(base64id.concat("=="));
+        DatabaseReference myRef = database.getReference("Users").child(base64id.concat("=="));
 
-        Log.d(TAG, "status: "+status + myRef);
+        Log.d(TAG, "status: " + status + myRef);
 
-        HashMap<String,Object> hashMap=new HashMap<>();
-        hashMap.put("status",status);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
         myRef.updateChildren(hashMap);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+
         status("online");
     }
 }

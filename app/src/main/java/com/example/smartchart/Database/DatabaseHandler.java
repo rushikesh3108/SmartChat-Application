@@ -12,6 +12,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.smartchart.AppConstant;
+import com.example.smartchart.Fragments.Contacts;
+import com.example.smartchart.Fragments.chats;
 import com.example.smartchart.MessageActivity;
 import com.example.smartchart.ModelClass.Chat;
 import com.example.smartchart.ModelClass.MessageData;
@@ -43,22 +45,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public void updateMessagestatus(String deliverystaus, String messageID) {
-
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Messages.DELVERY_STATUS, deliverystaus);
-        long raw = database.update(Messages.TABLE_NAME, contentValues, Messages.MESSAGE_ID + "=?", new String[]{String.valueOf(messageID)});
-        Log.d(TAG, "inside updateStudent : Row : " + raw);
-        Intent intent = new Intent(MessageActivity.UPDATE_MESSAGE_BRODCAST);
-        intent.putExtra(AppConstant.BundleKeys.MESSAGE_ID, messageID);
-        context.sendBroadcast(intent);
-        Log.d(TAG, "updateMessagestatus: " + AppConstant.BundleKeys.MESSAGE_ID);
-    }
 
     public static class User {
         public static final String TABLE_NAME = "Contacts";
         public static final String ID = "id";
+        public static final String PROFILE_IMAGE = "profile_imagetext";
+        public static final String STATUS = "status";
         public static final String USER_NAME = "user_name";
         public static final String USER_SUR_NAME = "user_sur_name";
         public static final String USER_MOBILE = "user_mobile";
@@ -106,6 +98,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 User.USER_NAME + " text, " +
                 User.USER_SUR_NAME + " text, " +
                 User.USER_MOBILE + " text, " +
+                User.STATUS + " text, " +
+                User.PROFILE_IMAGE + " text , " +
                 User.USER_ID + " text);";
         sqLiteDatabase.execSQL(createContactQuery);
         Log.d(TAG, "onCreate: ");
@@ -169,7 +163,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         context.sendBroadcast(intent);
 
 
-        //Make chatlist model data from message dat
+        //Make chatlist model data from message data
         Chat chat = new Chat();
         chat.unreadCount = 0;
         chat.message = message;
@@ -200,7 +194,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-
     public List<Users> displayUserContact() {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + User.TABLE_NAME + ";";
@@ -215,17 +208,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String userName = cursor.getString(cursor.getColumnIndex(User.USER_NAME));
             String userSurName = cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
             String userMobile = cursor.getString(cursor.getColumnIndex(User.USER_MOBILE));
+            String status = cursor.getString(cursor.getColumnIndex(User.STATUS));
+            String profileimg=cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE));
+
             user.setId(id);
             user.setFirstname(userName);
             user.setLastname(userSurName);
             user.setPhonenumber(userMobile);
+            user.setStatus(status);
+            user.setProfileImageURI(profileimg);
             userContactList.add(user);
         }
         Log.d(TAG, "userlist: " + userContactList);
-        cursor.close();
+        Intent statusintent = new Intent(Contacts.THIS_BROADCAST_FOR_CONTACT_STATUS);
+        statusintent.putExtra("contactstatus", (Serializable) userContactList);
+
+        context.sendBroadcast(statusintent);
+/*
+        cursor.close();*/
         return userContactList;
     }
-
 
     public List<String> displayUserID() {
         String id;
@@ -242,7 +244,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return userID;
     }
 
-
     public void insertUser(Users userContact) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -250,10 +251,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put(User.USER_SUR_NAME, userContact.getLastname());
         contentValues.put(User.USER_MOBILE, userContact.getPhonenumber());
         contentValues.put(User.USER_ID, userContact.getId());
+        contentValues.put(User.STATUS, userContact.getStatus());
         long row = database.insertWithOnConflict(User.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
 
         Log.d(TAG, "insertUser: " + row);
     }
+    public Users getUserbyPhonenumber(String number){
+        SQLiteDatabase database = this.getReadableDatabase();
+        String query = "SELECT * FROM " + User.TABLE_NAME + " WHERE " + User.USER_MOBILE + " = '" + number + "' ;";
+        Cursor cursor = database.rawQuery(query, null);
+        Log.d(TAG, "Cursor Count : " + cursor.getCount());
+        Users users=new Users();
+        while (cursor.moveToNext()) {
+            Log.d(TAG, "get userdata: ");
+            String id = cursor.getString(cursor.getColumnIndex(User.USER_ID));
+            String userName = cursor.getString(cursor.getColumnIndex(User.USER_NAME));
+            String userSurName = cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
+            String userMobile = cursor.getString(cursor.getColumnIndex(User.USER_MOBILE));
+            String status = cursor.getString(cursor.getColumnIndex(User.STATUS));
+            Log.d(TAG, "getUserbyPhonenumber: number : "+userMobile+","+status);
+            users.setId(id);
+            users.setFirstname(userName);
+            users.setLastname(userSurName);
+            users.setPhonenumber(userMobile);
+            users.setStatus(status);
+
+        }cursor.close();
+        return users;
+        }
 
     public MessageData getMessageById(String messageId) {
 
@@ -329,7 +354,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-
     public List<Chat> getChatList() {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + Chats.TABLE_NAME +
@@ -365,6 +389,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             userContacts.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
             userContacts.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
             userContacts.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
+            userContacts.setProfileImageURI(cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE)));
+            userContacts.setStatus(cursor.getString(cursor.getColumnIndex(User.STATUS)));
+
             // chat.user = userContacts;
             chat.user = userContacts;
 
@@ -413,6 +440,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         mUser.setFirstname(cursor.getString(cursor.getColumnIndex(User.USER_NAME)));
         mUser.setLastname(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
         mUser.setId(cursor.getString(cursor.getColumnIndex(User.USER_ID)));
+        mUser.setProfileImageURI(cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE)));
+        mUser.setStatus(cursor.getString(cursor.getColumnIndex(User.STATUS)));
+
         chat.user = mUser;
         cursor.close();
         return chat;
@@ -502,6 +532,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         intent.putExtra("contactdata", (Serializable) list);
         context.sendBroadcast(intent);
     }
+
     public List<Shedulermessagedata> getSheduleList() {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + Shedule.TABLE_NAME +
@@ -534,9 +565,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
 
 
-            String name =cursor.getString(cursor.getColumnIndex(User.USER_NAME));
-             String lastname =(cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
-            String id =cursor.getString(cursor.getColumnIndex(User.USER_ID));
+            String name = cursor.getString(cursor.getColumnIndex(User.USER_NAME));
+            String lastname = (cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
+            String id = cursor.getString(cursor.getColumnIndex(User.USER_ID));
             Users users = new Users();
             users.setId(id);
             users.setFirstname(name);
@@ -555,15 +586,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             //Shedlist.add(userContacts);
 
 
-
             Log.d(TAG, "getChatList: from shedlist  " + Shedlist);
         }
         cursor.close();
         return Shedlist;
     }
-
-
-
 
     public List<MessageData> Pendingmessagesupdate() {
         List<MessageData> MessagePendingList = new ArrayList<>();
@@ -576,15 +603,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             message.setMessageId(cursor.getString(cursor.getColumnIndex(Messages.MESSAGE_ID)));
             MessagePendingList.add(message);
-            for(int i=0;i<=MessagePendingList.size();i++){
-                String messagepending=message.messageId;
-                Log.d(TAG, "Pendingmessagesupdate_Status: "+messagepending);
+            for (int i = 0; i <= MessagePendingList.size(); i++) {
+                String messagepending = message.messageId;
+                Log.d(TAG, "Pendingmessagesupdate_Status: " + messagepending);
 
                 SharedPreferences preferences = context.getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 Gson gson = new Gson();
                 String jsonFavorites = gson.toJson(MessagePendingList);
-                editor.putString(AppConstant.PENDING_MESSAGE_SENDTO_DATABASE,jsonFavorites);
+                editor.putString(AppConstant.PENDING_MESSAGE_SENDTO_DATABASE, jsonFavorites);
                 editor.apply();
             }
         }
@@ -593,10 +620,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return MessagePendingList;
     }
 
+    public void updatetheprofileImageandstatus(String profileImages, String status, String number) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        Log.d(TAG, "updatetheprofileImageandstatus:  "+number+","+status);
+        values.put(User.PROFILE_IMAGE, profileImages);
+        values.put(User.STATUS, status);
+        long  raw = db.update(User.TABLE_NAME, values, "user_mobile = ?", new String[]{number});
+
+
+        Log.d(TAG, "updatetheprofileImageandstatus: " + raw);
+         Log.d(TAG, "updatetheprofileImageandstatus: broadcast send : "+number);
+
+
+    }
+
+
+    public void updateMessagestatus(String deliverystaus, String messageID) {
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Messages.DELVERY_STATUS, deliverystaus);
+        long raw = database.update(Messages.TABLE_NAME, contentValues, Messages.MESSAGE_ID + "=?", new String[]{String.valueOf(messageID)});
+        Log.d(TAG, "inside updateStudent : Row : " + raw);
+        Intent intent = new Intent(MessageActivity.UPDATE_MESSAGE_BRODCAST);
+        intent.putExtra(AppConstant.BundleKeys.MESSAGE_ID, messageID);
+        context.sendBroadcast(intent);
+        Log.d(TAG, "updateMessagestatus: " + AppConstant.BundleKeys.MESSAGE_ID);
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-
 
 
     }
