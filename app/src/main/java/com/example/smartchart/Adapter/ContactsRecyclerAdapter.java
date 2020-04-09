@@ -74,18 +74,31 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
         String userId = userContacts.getId().toString();
         Log.d(TAG, "onBindViewHolder: " + userId);
-
+String imageurl = userContacts.getProfileImageURI();
+        Log.d(TAG, "onBindViewHolder: image url  : "+imageurl);
         String s = fullName.substring(0, 1);
 
         Log.d(TAG, "onBindViewHolder: s = " + s);
 
         holder.txtUserName.setText(fullName);
         holder.txtUserContact.setText(mobile);
-        ColorGenerator generator = ColorGenerator.DEFAULT;
-        int color = generator.getRandomColor();
 
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(s, color);
+           /* ColorGenerator generator = ColorGenerator.DEFAULT;
+            int color = generator.getRandomColor();
+
+            TextDrawable drawable = TextDrawable.builder()
+                    .buildRound(s, color);
+
+            holder.image.setImageDrawable(drawable);
+*/
+            ColorGenerator generator = ColorGenerator.DEFAULT;
+
+            int color = generator.getRandomColor();
+            String si =fullName.substring(0,1);
+            TextDrawable drawable = TextDrawable.builder().buildRound(si, color);
+
+
+
 
         Drawable d = new BitmapDrawable(drawableToBitmap(drawable));
 
@@ -93,7 +106,6 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
                 .load(userContacts.getProfileImageURI())
                 .placeholder(d)
                 .into(holder.image);
-        holder.image.setImageDrawable(drawable);
 
         //String umob = userContacts.getUserMobileno().toString();
 

@@ -42,12 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class Contacts extends Fragment {
 
     public static final String THIS_BROADCAST_FOR_CONTACT_SEARCHBAR = "this is for contact searchBar";
 
-    public static final String THIS_BROADCAST_FOR_CONTACT_STATUS="this broadcast is for contact status ";
+    public static final String THIS_BROADCAST_FOR_CONTACT_STATUS = "this broadcast is for contact status ";
 
     public ContactsRecyclerAdapter adapter;
     String msg;
@@ -139,8 +138,8 @@ public class Contacts extends Fragment {
         }
 
 
-        IntentFilter intentFilter=new IntentFilter(THIS_BROADCAST_FOR_CONTACT_STATUS);
-        context.registerReceiver(contactstatus,intentFilter);
+        IntentFilter intentFilter = new IntentFilter(THIS_BROADCAST_FOR_CONTACT_STATUS);
+        context.registerReceiver(contactstatus, intentFilter);
 
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
@@ -201,13 +200,10 @@ public class Contacts extends Fragment {
                             Log.d(TAG, "onDataChange: ");
 
 
-                            Log.d(TAG, "onDataChange: UserId  broadcastsend  " + user.getStatus() + "," + user.getPhonenumber());
-
-
                             if (!userContactList.contains(userID)) {
                                 Log.d(TAG, "onDataChange: inside If" + userList + "\n" + userID);
                                 databaseHandler.insertUser(userContact);
-                                databaseHandler.updatetheprofileImageandstatus(image, status, userMobile);
+                                // databaseHandler.updatetheprofileImageandstatus(image, status, userMobile);
 
 
                             } else {
@@ -235,11 +231,8 @@ public class Contacts extends Fragment {
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.toString());
         }
-        adapter = new ContactsRecyclerAdapter(context, databaseHandler.displayUserContact());
-        Log.d(TAG, "after Send Adapter: " + adapter);
-        Log.d(TAG, "onCreateView: " + userList);
-        recyclerView.setAdapter(adapter);
-       // mrunnable.run();
+
+        // mrunnable.run();
         databaseUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -274,9 +267,9 @@ public class Contacts extends Fragment {
                         Log.d(TAG, "onDataChange: ");
 
 
-                        Log.d(TAG, "onDataChange: UserId  broadcastsend  " + user.getStatus() + "," + user.getPhonenumber());
+                        Log.d(TAG, "onDataChange: UserId  broadcastsend  " + image + "," + user.getPhonenumber());
                         DatabaseHandler mdata = new DatabaseHandler(context);
-                        mdata.updatetheprofileImageandstatus(image, status, userMobile);
+                        mdata.updatetheprofileImageandstatus(image,status, userMobile);
 
                         databaseHandler.displayUserContact();
 
@@ -290,7 +283,10 @@ public class Contacts extends Fragment {
             }
         });
 
-
+        adapter = new ContactsRecyclerAdapter(context, databaseHandler.displayUserContact());
+        Log.d(TAG, "after Send Adapter: " + adapter);
+        Log.d(TAG, "onCreateView: " + userList);
+        recyclerView.setAdapter(adapter);
         return view;
 
 
@@ -301,7 +297,7 @@ public class Contacts extends Fragment {
 
     }
 
-    private BroadcastReceiver contactstatus =new BroadcastReceiver() {
+    private BroadcastReceiver contactstatus = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             List<Users> data = (List<Users>) intent.getSerializableExtra("contactstatus");
@@ -376,7 +372,6 @@ public class Contacts extends Fragment {
         getActivity().unregisterReceiver(broadcastReceiver);
 
     }
-
 
 
 }

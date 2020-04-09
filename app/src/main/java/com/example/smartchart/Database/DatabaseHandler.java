@@ -203,14 +203,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             Users user = new Users();
-            Log.d(TAG, "get userdata: ");
+
             String id = cursor.getString(cursor.getColumnIndex(User.USER_ID));
             String userName = cursor.getString(cursor.getColumnIndex(User.USER_NAME));
             String userSurName = cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
             String userMobile = cursor.getString(cursor.getColumnIndex(User.USER_MOBILE));
             String status = cursor.getString(cursor.getColumnIndex(User.STATUS));
-            String profileimg=cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE));
-
+            String profileimg = cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE));
+            Log.d(TAG, "get userdata: profile image : " + profileimg);
+            //Log.d(TAG, "displayUserContact:  profile img "+profileimg);
             user.setId(id);
             user.setFirstname(userName);
             user.setLastname(userSurName);
@@ -252,16 +253,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put(User.USER_MOBILE, userContact.getPhonenumber());
         contentValues.put(User.USER_ID, userContact.getId());
         contentValues.put(User.STATUS, userContact.getStatus());
+        contentValues.put(User.PROFILE_IMAGE, userContact.getProfileImageURI());
         long row = database.insertWithOnConflict(User.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
 
         Log.d(TAG, "insertUser: " + row);
     }
-    public Users getUserbyPhonenumber(String number){
+
+    public Users getUserbyPhonenumber(String number) {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + User.TABLE_NAME + " WHERE " + User.USER_MOBILE + " = '" + number + "' ;";
         Cursor cursor = database.rawQuery(query, null);
         Log.d(TAG, "Cursor Count : " + cursor.getCount());
-        Users users=new Users();
+        Users users = new Users();
         while (cursor.moveToNext()) {
             Log.d(TAG, "get userdata: ");
             String id = cursor.getString(cursor.getColumnIndex(User.USER_ID));
@@ -269,16 +272,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String userSurName = cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
             String userMobile = cursor.getString(cursor.getColumnIndex(User.USER_MOBILE));
             String status = cursor.getString(cursor.getColumnIndex(User.STATUS));
-            Log.d(TAG, "getUserbyPhonenumber: number : "+userMobile+","+status);
+            Log.d(TAG, "getUserbyPhonenumber: number : " + userMobile + "," + status);
             users.setId(id);
             users.setFirstname(userName);
             users.setLastname(userSurName);
             users.setPhonenumber(userMobile);
             users.setStatus(status);
 
-        }cursor.close();
-        return users;
         }
+        cursor.close();
+        return users;
+    }
 
     public MessageData getMessageById(String messageId) {
 
@@ -623,14 +627,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updatetheprofileImageandstatus(String profileImages, String status, String number) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        Log.d(TAG, "updatetheprofileImageandstatus:  "+number+","+status);
+        Log.d(TAG, "updatetheprofileImageandstatus:  " + number + "," + status);
         values.put(User.PROFILE_IMAGE, profileImages);
         values.put(User.STATUS, status);
-        long  raw = db.update(User.TABLE_NAME, values, "user_mobile = ?", new String[]{number});
+        long raw = db.update(User.TABLE_NAME, values, "user_mobile = ?", new String[]{number});
 
 
         Log.d(TAG, "updatetheprofileImageandstatus: " + raw);
-         Log.d(TAG, "updatetheprofileImageandstatus: broadcast send : "+number);
+        Log.d(TAG, "updatetheprofileImageandstatus: broadcast send : " + number);
 
 
     }
