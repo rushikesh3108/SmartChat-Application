@@ -561,13 +561,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             messageData.setMessageid(messid);
             messageData.setTime(time);
 
-
-            /* chat.shedulermessagedata = messageData;*/
-
-
             Users userContacts = new Users();
             String fullName = cursor.getString(cursor.getColumnIndex(User.USER_NAME)) + cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME));
-
+            String userdp = cursor.getString(cursor.getColumnIndex(User.PROFILE_IMAGE));
 
             String name = cursor.getString(cursor.getColumnIndex(User.USER_NAME));
             String lastname = (cursor.getString(cursor.getColumnIndex(User.USER_SUR_NAME)));
@@ -576,19 +572,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             users.setId(id);
             users.setFirstname(name);
             users.setLastname(lastname);
-
+            users.setProfileImageURI(userdp);
             messageData.setUsers(users);
 
             Log.d(TAG, "getSheduleList: -> messid " + messid);
-            Log.d(TAG, "getSheduleList: -> id " + id);
+            Log.d(TAG, "getSheduleList: -> shed dp " + userdp);
             Log.d(TAG, "getSheduleList: -> fullname : " + fullName);
             Log.d(TAG, "getSheduleList: -> time :" + time);
-
             Log.d(TAG, "getSheduleList: -> bodvy :" + body);
-
             Shedlist.add(messageData);
-            //Shedlist.add(userContacts);
-
 
             Log.d(TAG, "getChatList: from shedlist  " + Shedlist);
         }

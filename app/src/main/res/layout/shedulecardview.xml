@@ -11,7 +11,7 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <ImageView
+        <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/shedulepageimage"
             android:layout_width="60dp"
             android:layout_height="60dp" />

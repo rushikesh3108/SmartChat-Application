@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ import static com.example.smartchart.AppConstant.LOGGED_IN_USER_ID;
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
     TextView Uname, Unumber;
-    private CircleImageView Profileimage;
+    private CircularImageView Profileimage;
 
     private static final int PICK_IMAGE = 1;
     private String userID;

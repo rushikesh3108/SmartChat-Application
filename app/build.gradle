@@ -57,6 +57,9 @@ dependencies {
     //Text Drawable
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
+    //circularimage
+    implementation 'com.mikhaellopez:circularimageview:4.2.0'
+
 
     implementation 'com.google.firebase:firebase-database:19.2.1'
 

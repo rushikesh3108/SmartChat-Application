@@ -1,7 +1,12 @@
 package com.example.smartchart.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.bumptech.glide.Glide;
 import com.example.smartchart.MessageActivity;
 import com.example.smartchart.ModelClass.Chat;
 import com.example.smartchart.R;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,6 +36,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     String s;
     Chat chat;
 
+
+    Dialog mydialog;
 
     Context mcontext;
    List<Chat> mchats;
@@ -44,6 +53,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         Log.d(TAG, "onCreateViewHolder: 1");
         View view= LayoutInflater.from( mcontext ).inflate( R.layout.chatcardview,parent,false);
         Log.d(TAG, "onCreateViewHolder: 2");
+
+
+        mydialog = new Dialog(mcontext);
+        mydialog.setContentView(R.layout.userpicpopupdialog);
+
         return new ViewHolder(view) ;
 
 
@@ -64,6 +78,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         String userId = chat.user.getId().toString();
         Log.d(TAG, "onBindViewHolder:user id  : "+userId);
+        String chatstatus= chat.user.getStatus();
+        Log.d(TAG, "onBindViewHolder: chat status :  "+chatstatus);
+
+        String chatpic= chat.user.getProfileImageURI();
+        Log.d(TAG, "onBindViewHolder:  chat image : "+chatpic);
 
         Log.d(TAG, "onBindViewHolder: "+position);
         holder.textViewname.setText(fullName);
@@ -86,13 +105,40 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         Log.d(TAG, "onBindViewHolder:  time "+dateFormat.format(result));
 
         ColorGenerator generator = ColorGenerator.DEFAULT;
-
         int color = generator.getRandomColor();
         String s =fullName.substring(0,1);
         TextDrawable drawable = TextDrawable.builder().buildRound(s, color);
 
+        Drawable d = new BitmapDrawable(drawableToBitmap(drawable));
 
-        holder.imageView.setImageDrawable(drawable);
+        Glide.with(mcontext)
+                .load(chatpic)
+                .placeholder(d)
+                .into(holder.imageView);
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Log.d(TAG, "onClick: image url");
+                ImageView imageView = mydialog.findViewById(R.id.userpic);
+                ColorGenerator generator = ColorGenerator.DEFAULT;
+
+                int color = generator.getRandomColor();
+                String si = fullName.substring(0, 1);
+                TextDrawable drawable = TextDrawable.builder().buildRound(si, color);
+
+
+                Drawable d = new BitmapDrawable(drawableToBitmap(drawable));
+
+                Glide.with(mcontext).load(chatpic).placeholder(d)
+                        .into(imageView);
+                mydialog.show();
+
+
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +155,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
                intent.putExtra( "ReciverUserID",userId);
                 Log.d(TAG, "onClick user id 123 : "+userId);
-                //intent.putExtra( "number",mobile);
+                intent.putExtra( "dp",chatpic);
+                intent.putExtra("status",chatstatus);
+
                 intent.putExtra( "name", fullName);
                 mcontext.startActivity( intent );
 
@@ -119,6 +167,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
 
     }
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+
+        int width = drawable.getIntrinsicWidth();
+        width = width > 0 ? width : 96; // Replaced the 1 by a 96
+        int height = drawable.getIntrinsicHeight();
+        height = height > 0 ? height : 96; // Replaced the 1 by a 96
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
     public void setCollection(List<Chat> chatCollection) {
         mchats = chatCollection;
         notifyDataSetChanged();
@@ -145,7 +212,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         TextView textViewname;
         TextView textViewbody;
         TextView textViewTimestamp;
-        ImageView imageView;
+        CircularImageView imageView;
 
 
 

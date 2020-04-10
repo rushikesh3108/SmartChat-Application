@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/circularimage"
             android:layout_width="250dp"
             android:layout_height="250dp"

@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -28,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.bumptech.glide.Glide;
 import com.example.smartchart.Adapter.MessageAdapter;
 import com.example.smartchart.Database.DatabaseHandler;
 import com.example.smartchart.ModelClass.MessageData;
@@ -38,6 +42,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +65,7 @@ public class MessageActivity extends AppCompatActivity {
     public static final String BROADCAST = "broadcast RECEIVER";
     public static final String UPDATE_MESSAGE_BRODCAST = "update_message_broadcast";
     public static final String MESSAGEID_STATUS_UPDATE = "messageID status update";
-    public static final String STATUSCHECKER = "statuschecker";
+
 
 
     String reciverID, name, mobile, txtmessage, senderID, messageID, profileImage, status, number;
@@ -69,7 +74,7 @@ public class MessageActivity extends AppCompatActivity {
     String s;
     FloatingActionButton btnSend;
     TextView textView, textViewStatus;
-    ImageView imageView;
+    CircularImageView imageView;
     RecyclerView recyclerView;
     MessageAdapter messageAdapter;
 
@@ -112,7 +117,7 @@ public class MessageActivity extends AppCompatActivity {
         context = this;
         Intent intent = getIntent();
         reciverID = intent.getStringExtra("ReciverUserID");
-        //reciverID=intent.getStringExtra("ReceiverUserID1");
+        profileImage =intent.getStringExtra("dp");
         Log.d(TAG, "onCreate reciver id :  " + reciverID);
         mobile = intent.getStringExtra("number");
         name = getIntent().getStringExtra("name");
@@ -123,12 +128,18 @@ public class MessageActivity extends AppCompatActivity {
         textViewStatus.setText(status);
 
         ColorGenerator generator = ColorGenerator.DEFAULT;
-
         int color = generator.getRandomColor();
         s = name.substring(0, 1);
         TextDrawable drawable1 = TextDrawable.builder().buildRound(s, color);
 
-        imageView.setImageDrawable(drawable1);
+
+        Drawable d = new BitmapDrawable(drawableToBitmap(drawable1));
+
+        Glide.with(context)
+                .load(profileImage)
+                .placeholder(d)
+                .into(imageView);
+
 
 
         preferences = getSharedPreferences(AppConstant.PREFERENCE_FILE_NAME, MODE_PRIVATE);
@@ -141,24 +152,12 @@ public class MessageActivity extends AppCompatActivity {
         IntentFilter intentFilter2 = new IntentFilter(MESSAGEID_STATUS_UPDATE);
         receiver = new NetworkChangeReceiver();
         registerReceiver(receiver, intentFilter2);
-/*
-
-        IntentFilter intentstatusChecker = new IntentFilter(STATUS_CHECK);
-        registerReceiver(StatusChecker, intentstatusChecker);
-*/
 
         //INTERNET AUTO DETETCTED
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkChangeReceiver();
         registerReceiver(receiver, filter);
 
-/*
-
-        IntentFilter intentFilter12 = new IntentFilter(STATUSCHECKER);
-        Log.d(TAG, "onResume: 01");
-        registerReceiver(statuscheckker, intentFilter12);
-        Log.d(TAG, "onResume: 02 ");
-*/
 
 
         messageDatabaseHandler = new DatabaseHandler(this);
@@ -211,6 +210,24 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+
+        int width = drawable.getIntrinsicWidth();
+        width = width > 0 ? width : 96; // Replaced the 1 by a 96
+        int height = drawable.getIntrinsicHeight();
+        height = height > 0 ? height : 96; // Replaced the 1 by a 96
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -225,7 +242,6 @@ public class MessageActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
-        // unregisterReceiver(statuscheckker);
         unregisterReceiver(UpdateBroadcastReceiver);
         unregisterReceiver(receiver);
     }
@@ -298,12 +314,6 @@ public class MessageActivity extends AppCompatActivity {
             isConnected = false;
         }
     }
-  /* private BroadcastReceiver statuscheckker=new BroadcastReceiver() {
-       @Override
-       public void onReceive(Context context, Intent intent) {
-           Log.d(TAG, "onReceive: 32   ");
-       }
-   };*/
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
